@@ -1,9 +1,5 @@
 <?php
 class ResponsableV extends Persona{
-    private $nrodoc;
-    private $pnombre;
-    private $papellido;
-    private $ptelefono;
     private $rnumeroempleado;
     private $rnumerolicencia;
     public function __construct() {

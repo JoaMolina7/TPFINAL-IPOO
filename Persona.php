@@ -8,9 +8,9 @@ class Persona {
     public function __construct(){
 		
 		$this->nrodoc = 0;
-		$this->nombre = "";
-		$this->apellido = "";
-		$this->email = "";
+		$this->pnombre = "";
+		$this->papellido = "";
+		$this->ptelefono = "";
 	}
 
 	public function cargar($NroD,$Nom,$Ape,$ptelefono){		
