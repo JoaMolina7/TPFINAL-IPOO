@@ -117,11 +117,87 @@ function gestionarEmpresas() {
     mostrarMenuEmpresas();
     echo "Opción: ";
     $opcionUserEmpresa = trim(fgets(STDIN));
-
+    $empresa = new Empresa();
     if ($opcionUserEmpresa == 5) {
         App();
     } else {
-        // Aquí puedes añadir más casos para las opciones del menú de empresas
+        switch($opcionUserEmpresa) {
+            case 1: 
+                // Ver Lista de Empresas
+                $empresa = new Empresa();
+                $listaEmpresas = $empresa->listar();
+                if ($listaEmpresas) {
+                    echo "Empresas encontradas: \n";
+                    foreach ($listaEmpresas as $empresa) {
+                        echo "--------------------------------\n";
+                        imprimirEnVerde($empresa);
+                    }
+                } else {
+                    echo "No se encontraron empresas.\n";
+                }
+                break;
+            case 2: 
+                // Agregar Empresa 
+                echo "Ingrese el nombre de la empresa: ";
+                $nombreEmpresa = trim(fgets(STDIN));
+                echo "Ingrese la dirección de la empresa: ";
+                $direccionEmpresa = trim(fgets(STDIN));
+                $empresa->setENombre($nombreEmpresa);
+                $empresa->setEdireccion($direccionEmpresa);
+                $empresa->setIdEmpresa(0);
+                $insert = $empresa->insertar();
+                if ($insert) {
+                    imprimirEnVerde("Empresa agregada exitosamente \n");
+                } else {
+                    imprimirEnRojo("Error al agregar la empresa \n");
+                }
+                break;
+            case 3: 
+                // Modificar Empresa 
+                echo "Ingrese el ID de la empresa a modificar: ";
+                $idEmpresa = trim(fgets(STDIN));
+                $found = $empresa->Buscar($idEmpresa);
+                if ($found) {
+                    echo "Que desea modificar? \n";
+                    mostrarMenuModificacionEmpresa();
+                    echo "Opción: ";
+                    $opcionModificacionEmpresa = trim(fgets(STDIN));
+                    switch($opcionModificacionEmpresa) {
+                        case 1:
+                            echo "Ingrese el nuevo nombre de la empresa: ";
+                            $nuevoNombreEmpresa = trim(fgets(STDIN));
+                            $empresa->setENombre($nuevoNombreEmpresa);
+                            $empresa->modificar();
+                            imprimirEnVerde("Nombre modificado exitosamente \n");
+                            break;
+                        case 2:
+                            echo "Ingrese la nueva dirección de la empresa: ";
+                            $nuevaDireccionEmpresa = trim(fgets(STDIN));
+                            $empresa->setEdireccion($nuevaDireccionEmpresa);
+                            $empresa->modificar();
+                            imprimirEnVerde("Dirección modificada exitosamente \n");
+                            break;
+                        default:
+                            imprimirEnRojo("Opción no válida, por favor seleccione una opción válida \n");
+                            break;
+                    }
+                } else {
+                    imprimirEnRojo("La empresa no se encuentra registrada \n");
+                }
+                break;
+            case 4: 
+                // Eliminar Empresa
+                echo "Ingrese el ID de la empresa a eliminar: ";
+                $idEmpresa = trim(fgets(STDIN));
+                $found = $empresa->Buscar($idEmpresa);
+                if ($found) {
+                    $empresa->eliminar();
+                    imprimirEnVerde("Empresa eliminada exitosamente \n");
+                } else {
+                    imprimirEnRojo("La empresa no se encuentra registrada \n");
+                }
+                break;
+        }
         gestionarEmpresas(); // Volver al menú de empresas después de manejar una opción
     }
 }
@@ -374,8 +450,9 @@ function mostrarMenuModificacionPersona() {
     echo "3) Modificar Telefono \n";
 }
 
-function mostrarMenuModificacionResponsable() {
-    echo "1) Modificar Numero Licencia \n";
+function mostrarMenuModificacionEmpresa() {
+    echo "1) Modificar Nombre \n";
+    echo "2) Modificar Dirección \n";
 }
 
 
