@@ -1,5 +1,4 @@
 ﻿<?php
-/* IMPORTANTE !!!!  Clase para (PHP 5, PHP 7)*/
 
 class BaseDatos {
     private $HOSTNAME;
@@ -18,7 +17,7 @@ class BaseDatos {
         $this->HOSTNAME = "127.0.0.1";
         $this->BASEDATOS = "bdviajes";
         $this->USUARIO = "root";
-        $this->CLAVE="";
+        $this->CLAVE="root";
         $this->RESULT=null;
         $this->QUERY="";
         $this->ERROR="";
@@ -31,7 +30,6 @@ class BaseDatos {
      */
     public function getError(){
         return "\n".$this->ERROR;
-        
     }
     
     /**
@@ -120,4 +118,3 @@ class BaseDatos {
     }
     
 }
-?>

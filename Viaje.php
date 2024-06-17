@@ -22,9 +22,11 @@ class Viaje{
 	private $rnumeroempleado;
 	private $vimporte;
     private $mensajeoperacion;
+	
+	// private $colObjPasajeros;
+	// private $objResponsableV;
 
-
-	public function __construct(){
+	public function __construct() {
 	    $this->idviaje=0;
 		$this->vdestino = "";
 		$this->vcantmaxpasajeros = 0;
@@ -169,8 +171,14 @@ class Viaje{
 	public function insertar(){
 		$base=new BaseDatos();
 		$resp= false;
-		$consultaInsertar="INSERT INTO viaje(vdestino,vcantmaxpasajeros,idempresa,rnumeroempleado,vimporte) 
-				VALUES (".$this->getVdestino().",".$this->getVcantmaxpasajeros().",".$this->getIdEmpresa().",".$this->getRnumeroempleado().",'".$this->getVimporte()."')";
+		$destino = $this->getVdestino();
+		$cantMaxPasajeros = $this->getVcantmaxpasajeros();
+		$idEmpresa = $this->getIdEmpresa();
+		$numeroEmpleado = $this->getRnumeroempleado();
+		$importe = $this->getVimporte();
+
+		$consultaInsertar = "INSERT INTO viaje(vdestino, vcantmaxpasajeros, idempresa, rnumeroempleado, vimporte) 
+		VALUES ('$destino', $cantMaxPasajeros, $idEmpresa, $numeroEmpleado, $importe)";
 		
 		if($base->Iniciar()){
 
@@ -195,7 +203,14 @@ class Viaje{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-		$consultaModifica="UPDATE viaje SET vdestino='".$this->getVdestino()."',vcantmaxpasajeros=".$this->getVcantmaxpasajeros().",idempresa=".$this->getIdEmpresa().",rnumeroempleado=".$this->getRnumeroempleado().",vimporte='".$this->getVimporte()."' WHERE id".$this->getIdViaje();
+		$destino = $this->getVdestino();
+		$cantMaxPasajeros = $this->getVcantmaxpasajeros();
+		$idEmpresa = $this->getIdEmpresa();
+		$numeroEmpleado = $this->getRnumeroempleado();
+		$importe = $this->getVimporte();
+		$idViaje = $this->getIdViaje();
+		$consultaModifica = "UPDATE viaje SET vdestino='$destino', vcantmaxpasajeros=$cantMaxPasajeros, idempresa=$idEmpresa, rnumeroempleado=$numeroEmpleado, vimporte=$importe WHERE idviaje=$idViaje";
+
 		if($base->Iniciar()){
 			if($base->Ejecutar($consultaModifica)){
 			    $resp = true;
@@ -234,4 +249,4 @@ class Viaje{
 			
 	}
 }
-?>
+

@@ -4,7 +4,7 @@ CREATE TABLE empresa(
     enombre varchar(150),
     edireccion varchar(150),
     PRIMARY KEY (idempresa)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE persona(
     nrodoc int,
@@ -20,7 +20,7 @@ CREATE TABLE responsableV(
 	nrodoc int,
     PRIMARY KEY (rnumeroempleado),
     FOREIGN KEY (nrodoc) REFERENCES persona (nrodoc) ON UPDATE CASCADE ON DELETE CASCADE
-    )ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 	
 CREATE TABLE viaje (
     idviaje int AUTO_INCREMENT, /*codigo de viaje*/
@@ -31,10 +31,11 @@ CREATE TABLE viaje (
     vimporte int,
     PRIMARY KEY (idviaje),
     FOREIGN KEY (idempresa) REFERENCES empresa (idempresa),
-	FOREIGN KEY (rnumeroempleado) REFERENCES responsablev (rnumeroempleado)
+	FOREIGN KEY (rnumeroempleado) REFERENCES responsableV (rnumeroempleado)
+    /* actualice el responsablev a responsableV para no tener error en la foreign key */
     ON UPDATE CASCADE
     ON DELETE RESTRICT
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT = 1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT = 1;
 	
 CREATE TABLE pasajero(
     nrodoc int,
@@ -43,6 +44,6 @@ CREATE TABLE pasajero(
     PRIMARY KEY (pasaporte),
 	FOREIGN KEY (idviaje) REFERENCES viaje (idviaje),
     FOREIGN KEY (nrodoc) REFERENCES persona (nrodoc) ON UPDATE CASCADE ON DELETE CASCADE	
-    )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
  
   
