@@ -3,6 +3,7 @@
 
 include_once 'Empresa.php';
 include_once 'Viaje.php';
+include_once 'Persona.php';
 
 //$baseDatos = new BaseDatos();
 //$conexion = $baseDatos->Iniciar();
@@ -205,3 +206,30 @@ if ($viajeEncontrado) {
     echo "No se encontró el viaje con ID $idViaje.\n";
 }
 */
+
+// test rapido modificar persona
+
+$persona = new Persona();
+$dni = 2234243;
+
+$existe = $persona->Buscar($dni);
+
+if ($existe) {
+    echo "Persona encontrada: \n";
+    echo $persona;
+    $nuevoDNI = 45884348;
+    $persona->setNrodoc($nuevoDNI);
+    $modificacionExitosa = $persona->modificar();
+    if ($modificacionExitosa) {
+        echo "La persona fue modificada exitosamente.\n";
+        echo $persona;
+    } else {
+        echo "Error al modificar la persona.\n";
+        echo $persona->getMensajeOperacion();
+    }
+
+} else {
+    echo "No se encontró la persona con DNI $dni.\n";
+} 
+
+

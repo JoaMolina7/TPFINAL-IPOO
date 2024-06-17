@@ -24,7 +24,7 @@ class Viaje{
     private $mensajeoperacion;
 	
 	// private $colObjPasajeros;
-	// private $objResponsableV;
+	// implementar opciones de agregar pasajeros y responsables
 
 	public function __construct() {
 	    $this->idviaje=0;

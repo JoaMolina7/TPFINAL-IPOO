@@ -58,13 +58,13 @@ class Persona {
 	 */		
     public function Buscar($dni){
 		$base=new BaseDatos();
-		$consultaPersona="Select * from persona where nrodoc=".$dni;
+		$consultaPersona = "SELECT * FROM persona WHERE nrodoc='$dni'";
 		$resp= false;
 		if($base->Iniciar()){
 			if($base->Ejecutar($consultaPersona)){
 				if($row2=$base->Registro()){					
 				    $this->setNrodoc($dni);
-					$this->setPNombre($row2['nombre']);
+					$this->setPNombre($row2['pnombre']);
 					$this->setPApellido($row2['papellido']);
 					$this->setPTelefono($row2['ptelefono']);
 					$resp= true;
@@ -113,37 +113,38 @@ class Persona {
 		 }	
 		 return $arregloPersona;
 	}		
-    public function insertar(){
-		$base=new BaseDatos();
-		$resp= false;
-		$consultaInsertar="INSERT INTO persona(nrodoc, papellido, pnombre,  ptelefono) 
-				VALUES (".$this->getNrodoc().",'".$this->getPApellido()."','".$this->getPNombre()."','".$this->getPTelefono()."')";
-		
-		if($base->Iniciar()){
-
-			if($base->Ejecutar($consultaInsertar)){
-
-			    $resp=  true;
-
-			}	else {
-					$this->setmensajeoperacion($base->getError());
-					
-			}
-
-		} else {
+	public function insertar() {
+		$base = new BaseDatos();
+		$resp = false;
+		$consultaInsertar = "INSERT INTO persona(nrodoc, papellido, pnombre, ptelefono) 
+							 VALUES ('" . $this->getNrodoc() . "','" . $this->getPApellido() . "','" . $this->getPNombre() . "','" . $this->getPTelefono() . "')";
+	
+		if ($base->Iniciar()) {
+			if ($base->Ejecutar($consultaInsertar)) {
+				$resp = true;
+			} else {
 				$this->setmensajeoperacion($base->getError());
-			
+			}
+		} else {
+			$this->setmensajeoperacion($base->getError());
 		}
+		
 		return $resp;
 	}
+	
 	
 	
 	
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-		$consultaModifica="UPDATE persona SET papellido='".$this->getPApellido()."',nombre='".$this->getPNombre()."'
-                           ,ptelefono='".$this->getPTelefono()."' WHERE nrodoc=". $this->getNrodoc();
+
+		$nombre = $this->getPNombre();
+		$apellido = $this->getPApellido();
+		$telefono = $this->getPTelefono();
+		$nrodoc = $this->getNrodoc();
+
+		$consultaModifica = "UPDATE persona SET pnombre='$nombre', papellido='$apellido', ptelefono='$telefono' WHERE nrodoc=$nrodoc";
 		if($base->Iniciar()){
 			if($base->Ejecutar($consultaModifica)){
 			    $resp=  true;

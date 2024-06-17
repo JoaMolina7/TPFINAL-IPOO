@@ -31,7 +31,7 @@ class ResponsableV extends Persona{
     }
     public function Buscar($dni){
 		$base=new BaseDatos();
-		$consulta="Select * from responsablev where nrodoc=".$dni;
+		$consulta = "SELECT * FROM responsableV WHERE nrodoc = " . $dni;
 		$resp= false;
 		if($base->Iniciar()){
 		    if($base->Ejecutar($consulta)){
@@ -55,7 +55,7 @@ class ResponsableV extends Persona{
     public  function listar($condicion=""){
 	    $arreglo = null;
 		$base=new BaseDatos();
-		$consulta="Select * from responsablev ";
+		$consulta="Select * from responsableV ";
 		if ($condicion!=""){
 		    $consulta=$consulta.' where '.$condicion;
 		}
@@ -77,25 +77,26 @@ class ResponsableV extends Persona{
 		 }	
 		 return $arreglo;
 	}	
-    public function insertar(){
-		$base=new BaseDatos();
-		$resp= false;
+	public function insertar(){
+		$base = new BaseDatos();
+		$resp = false;
 		
-		if(parent::insertar()){
-		    $consultaInsertar="INSERT INTO responsablev(nrodoc, rnumeroempleado, rnumerolicencia)
-				VALUES (".$this->getNrodoc().",'".$this->getRnumeroempleado().",'".$this->getRnumerolicencia()."')";
-		    if($base->Iniciar()){
-		        if($base->Ejecutar($consultaInsertar)){
-		            $resp=  true;
-		        }	else {
-		            $this->setmensajeoperacion($base->getError());
-		        }
-		    } else {
-		        $this->setmensajeoperacion($base->getError());
-		    }
-		 }
+		$consultaInsertar = "INSERT INTO responsableV (nrodoc, rnumeroempleado, rnumerolicencia)
+							 VALUES ('" . $this->getNrodoc() . "','" . $this->getRnumeroempleado() . "','" . $this->getRnumerolicencia() . "')";
+	
+		if ($base->Iniciar()) {
+			if ($base->Ejecutar($consultaInsertar)) {
+				$resp = true;
+			} else {
+				$this->setmensajeoperacion($base->getError());
+			}
+		} else {
+			$this->setmensajeoperacion($base->getError());
+		}
+	
 		return $resp;
 	}
+	
 	
 	
 	
@@ -103,7 +104,7 @@ class ResponsableV extends Persona{
 	    $resp =false; 
 	    $base=new BaseDatos();
 	    if(parent::modificar()){
-	        $consultaModifica="UPDATE responsablev SET rnumeroempleado='".$this->getRnumeroempleado()."', rnumerolicencia='".$this->getRnumerolicencia()."' WHERE nrodoc=". $this->getNrodoc();
+	        $consultaModifica="UPDATE responsableV SET rnumeroempleado='".$this->getRnumeroempleado()."', rnumerolicencia='".$this->getRnumerolicencia()."' WHERE nrodoc=". $this->getNrodoc();
 	        if($base->Iniciar()){
 	            if($base->Ejecutar($consultaModifica)){
 	                $resp=  true;
@@ -124,7 +125,7 @@ class ResponsableV extends Persona{
 		$base=new BaseDatos();
 		$resp=false;
 		if($base->Iniciar()){
-				$consultaBorra="DELETE FROM responsablev WHERE nrodoc=".$this->getNrodoc();
+				$consultaBorra="DELETE FROM responsableV WHERE nrodoc=".$this->getNrodoc();
 				if($base->Ejecutar($consultaBorra)){
 				    if(parent::eliminar()){
 				        $resp=  true;
