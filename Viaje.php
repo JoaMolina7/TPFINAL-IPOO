@@ -26,7 +26,7 @@ class Viaje{
 	// private $colObjPasajeros;
 	// implementar opciones de agregar pasajeros y responsables
 
-	public function __construct() {
+	public function __construct(){
 	    $this->idviaje=0;
 		$this->vdestino = "";
 		$this->vcantmaxpasajeros = 0;
@@ -130,7 +130,7 @@ class Viaje{
     
 
 	public function listar($condicion=""){
-	    $arregloPersona = null;
+	    $arregloViaje = null;
 		$base=new BaseDatos();
 		$consultasViajes="Select * from viaje ";
 		if ($condicion!=""){
@@ -171,14 +171,8 @@ class Viaje{
 	public function insertar(){
 		$base=new BaseDatos();
 		$resp= false;
-		$destino = $this->getVdestino();
-		$cantMaxPasajeros = $this->getVcantmaxpasajeros();
-		$idEmpresa = $this->getIdEmpresa();
-		$numeroEmpleado = $this->getRnumeroempleado();
-		$importe = $this->getVimporte();
-
-		$consultaInsertar = "INSERT INTO viaje(vdestino, vcantmaxpasajeros, idempresa, rnumeroempleado, vimporte) 
-		VALUES ('$destino', $cantMaxPasajeros, $idEmpresa, $numeroEmpleado, $importe)";
+		$consultaInsertar="INSERT INTO viaje(vdestino,vcantmaxpasajeros,idempresa,rnumeroempleado,vimporte) 
+				VALUES (".$this->getVdestino().",".$this->getVcantmaxpasajeros().",".$this->getIdEmpresa().",".$this->getRnumeroempleado().",'".$this->getVimporte()."')";
 		
 		if($base->Iniciar()){
 
@@ -203,14 +197,7 @@ class Viaje{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-		$destino = $this->getVdestino();
-		$cantMaxPasajeros = $this->getVcantmaxpasajeros();
-		$idEmpresa = $this->getIdEmpresa();
-		$numeroEmpleado = $this->getRnumeroempleado();
-		$importe = $this->getVimporte();
-		$idViaje = $this->getIdViaje();
-		$consultaModifica = "UPDATE viaje SET vdestino='$destino', vcantmaxpasajeros=$cantMaxPasajeros, idempresa=$idEmpresa, rnumeroempleado=$numeroEmpleado, vimporte=$importe WHERE idviaje=$idViaje";
-
+		$consultaModifica="UPDATE viaje SET vdestino='".$this->getVdestino()."',vcantmaxpasajeros=".$this->getVcantmaxpasajeros().",idempresa=".$this->getIdEmpresa().",rnumeroempleado=".$this->getRnumeroempleado().",vimporte='".$this->getVimporte()."' WHERE id".$this->getIdViaje();
 		if($base->Iniciar()){
 			if($base->Ejecutar($consultaModifica)){
 			    $resp = true;
@@ -249,4 +236,4 @@ class Viaje{
 			
 	}
 }
-
+?>
