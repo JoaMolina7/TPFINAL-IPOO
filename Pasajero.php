@@ -152,10 +152,9 @@ class Pasajero extends Persona{
 		return $resp; 
 	}
     public function __toString(){
-        $resp= parent::__toString();
-        $resp=$resp."Pasaporte: ".$this->getPasaporte()."\n"."IdViaje: ".$this->getIdviaje() . "\n";
-	    return $resp;
-			
+        return parent::__toString() . 
+        "Pasaporte: " . $this->getPasaporte(). "\n".
+		"IdViaje: ".    $this->getIdviaje() .  "\n";
 	}
 
 }

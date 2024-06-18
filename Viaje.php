@@ -22,6 +22,7 @@ class Viaje{
 	private $rnumeroempleado;
 	private $vimporte;
     private $mensajeoperacion;
+	private $totalRecaudado;
 	private $colObjPasajeros = [];
 	// implementar opciones de agregar pasajeros y responsables
 
@@ -241,12 +242,6 @@ class Viaje{
 		return $resp; 
 	}
 
-	public function __toString(){
-	    return "\nID Viaje: ".$this->getIdViaje()."\nDestino: ".$this->getVdestino()."\nCant. Max. Pasajeros: ".$this->getVcantmaxpasajeros().
-	    	"\nID Empresa: ".$this->getIdEmpresa()."\nID Empleado: ".$this->getRnumeroempleado()."\nImporte: ".$this->getVimporte()."\n";
-			
-	}
-
 	public function agregarPasajero($pasajero) {
 		$pasajeroAgregado = false;
 		$colObjPasajeros = $this->getColObjPasajeros();
@@ -258,6 +253,30 @@ class Viaje{
 		return $pasajeroAgregado;
     }
 
+	public function calcularTotalRecaudado() {
+		$totalRecaudado = 0;
+		$cantidadPasajeros = count($this->getColObjPasajeros());
+		if ($cantidadPasajeros != 0) {
+			for ($i = 0; $i < $cantidadPasajeros; $i++) {
+				$totalRecaudado += $this->getVimporte();
+			}	
+		}		
+		return $totalRecaudado;
+	}
+	
 
+
+
+	public function __toString(){
+	    return 
+		"\nID Viaje: ".$this->getIdViaje().
+		"\nDestino: ".$this->getVdestino().
+		"\nCantidad de Pasajeros: ". count($this->getColObjPasajeros()).
+		"\nCant. Max. Pasajeros: ".$this->getVcantmaxpasajeros().
+	    "\nID Empresa: ".$this->getIdEmpresa().
+		"\nID Empleado: ".$this->getRnumeroempleado().
+		"\nImporte Pasaje: ".$this->getVimporte()."\n".
+		"\nTotal Recaudado: ".$this->calcularTotalRecaudado()."\n";
+	}
 }
 ?>

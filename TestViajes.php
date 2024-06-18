@@ -9,7 +9,6 @@ include_once 'Viaje.php';
 
 
 // Implementamos menu principal y sus variaciones.
-
 function mostrarMenuPrincipal() {
     echo "1) Gestionar Viajes \n";
     echo "2) Gestionar Empresas \n";
@@ -18,9 +17,6 @@ function mostrarMenuPrincipal() {
     echo "5) Gestionar Personas \n";
     echo "6) Salir \n";
 }
-
-// CRUD - Create , Read , Update Delete
-
 function mostrarMenuViajes() {
     echo "1) Ver Lista de Viajes \n";
     echo "2) Agregar Viaje \n";
@@ -28,7 +24,6 @@ function mostrarMenuViajes() {
     echo "4) Eliminar Viaje \n";
     echo "5) Volver al Menu Principal \n";
 }
-
 function mostrarMenuEmpresas() {
     echo "1) Ver Lista de Empresas \n";
     echo "2) Agregar Empresa \n";
@@ -36,7 +31,6 @@ function mostrarMenuEmpresas() {
     echo "4) Eliminar Empresa \n";
     echo "5) Volver al Menu Principal \n";
 }
-
 function mostrarMenuPasajeros() {
     echo "1) Ver Lista de Pasajeros \n";
     echo "2) Agregar Pasajero \n";
@@ -44,7 +38,6 @@ function mostrarMenuPasajeros() {
     echo "4) Eliminar Pasajero \n";
     echo "5) Volver al Menu Principal \n";
 }
-
 function mostrarMenuResponsables() {
     echo "1) Ver Lista de Responsables \n";
     echo "2) Agregar Responsable \n";
@@ -52,7 +45,6 @@ function mostrarMenuResponsables() {
     echo "4) Eliminar Responsable \n";
     echo "5) Volver al Menu Principal \n";
 }
-
 function mostrarMenuPersonas() {
     echo "1) Ver Lista de Personas \n";
     echo "2) Agregar Persona \n";
@@ -61,6 +53,27 @@ function mostrarMenuPersonas() {
     echo "5) Volver al Menu Principal \n";
 }
 
+// funciones agregadas
+function imprimirEnVerde($texto) {
+    echo "\033[0;32m" . $texto . "\033[0m";
+}
+function imprimirEnRojo($texto) {
+    echo "\033[0;31m" . $texto . "\033[0m";
+}
+function mostrarMenuModificacionPersona() {
+    echo "1) Modificar Nombre \n";
+    echo "2) Modificar Apellido \n";
+    echo "3) Modificar Telefono \n";
+}
+function mostrarMenuModificacionEmpresa() {
+    echo "1) Modificar Nombre \n";
+    echo "2) Modificar Dirección \n";
+}
+function mostrarMenuModificacionViaje() {
+    echo "1) Modificar Destino \n";
+    echo "2) Modificar Importe \n";
+    echo "3) Modificar Cantidad Máxima de Pasajeros \n";
+}
 
 // Implementacion de funciones para gestionar las opciones del menu
 
@@ -69,6 +82,7 @@ function gestionarViajes() {
     echo "Opción: ";
     $opcionUserViaje = trim(fgets(STDIN));
     $viaje = new Viaje(); 
+    $pasajero = new Pasajero();
     if ($opcionUserViaje == 5) {
         App();
     } else {
@@ -80,7 +94,12 @@ function gestionarViajes() {
                 if ($listaViajes) {
                     echo "Viajes encontrados: \n";
                     foreach ($listaViajes as $viaje) {
-                        echo "--------------------------------\n";
+                        $idViaje = $viaje->getIdViaje();
+                        $colObjPasajerosBd = $pasajero->listar("idviaje = $idViaje");
+                        foreach ($colObjPasajerosBd as $pasajeroBd) {
+                            $viaje->agregarPasajero($pasajeroBd);
+                        }
+                        echo "--------------------------------";
                         imprimirEnVerde($viaje);
                     }
                 } else {
@@ -186,10 +205,6 @@ function gestionarViajes() {
         gestionarViajes(); // Volver al menú de viajes después de manejar una opción
     }
 }
-
-
-
-
 function gestionarEmpresas() {
     mostrarMenuEmpresas();
     echo "Opción: ";
@@ -278,7 +293,6 @@ function gestionarEmpresas() {
         gestionarEmpresas(); // Volver al menú de empresas después de manejar una opción
     }
 }
-
 function gestionarPasajeros() {
     mostrarMenuPasajeros();
     echo "Opción: ";
@@ -297,9 +311,8 @@ function gestionarPasajeros() {
                 if ($found){
                     $listaPasajeros = $pasajero->listar("idviaje = $idViaje");
                     if ($listaPasajeros) {
-                        echo "Pasajeros encontrados: \n";
                         foreach ($listaPasajeros as $pasajero) {
-                            echo "--------------------------------\n";
+                            echo "--------------------------------";
                             imprimirEnVerde($pasajero);
                         }
                     } else {
@@ -345,7 +358,8 @@ function gestionarPasajeros() {
                                 $cantPasajerosNueva = count($viaje->getColObjPasajeros());
                                 $insert = $pasajero->insertar();
                                 if ($insert) {
-                                    imprimirEnVerde("Pasajero agregado exitosamente: " . $cantPasajerosNueva . "/" . $cantMax . "\n");
+                                    imprimirEnVerde("Pasajero agregado exitosamente: " . $cantPasajerosNueva . "/" . $cantMax . "\n") .  "\n" . 
+                                    imprimirEnVerde("Valor: $" . $viaje->getVimporte() . "\n");     
                                 } 
                             }
                         }
@@ -356,8 +370,30 @@ function gestionarPasajeros() {
                 break;
             case 3:
                 // Modificar Pasajero
+                echo "Ingrese el documento del pasajero a modificar: ";
+                $documentoPasajero = trim(fgets(STDIN));
+                $found = $pasajero->Buscar($documentoPasajero);
+                if ($found) {
+                    echo "Ingrese el nuevo pasaporte del pasajero: ";
+                    $nuevoPasaporte = trim(fgets(STDIN));
+                    $pasajero->setPasaporte($nuevoPasaporte);
+                    $pasajero->modificar();
+                    imprimirEnVerde("Pasaporte modificado exitosamente \n");
+                } else {
+                    imprimirEnRojo("El pasajero no se encuentra registrado \n");
+                }
             case 4: 
                 // Eliminar Pasajero
+                echo "Ingrese el documento del pasajero a eliminar: ";
+                $documentoPasajero = trim(fgets(STDIN));
+                $found = $pasajero->Buscar($documentoPasajero);
+                if ($found) {
+                    $pasajero->eliminar();
+                    imprimirEnVerde("Pasajero eliminado exitosamente \n");
+                } else {
+                    imprimirEnRojo("El pasajero no se encuentra registrado \n");
+                }
+                break;
             default:
                 echo "Opción no válida, por favor seleccione una opción válida \n";
                 break;
@@ -440,7 +476,6 @@ function gestionarResponsables() {
         gestionarResponsables(); // Volver al menú de responsables después de manejar una opción
     }
 }
-
 function gestionarPersonas() {
     mostrarMenuPersonas();
     echo "Opción: ";
@@ -551,9 +586,8 @@ function gestionarPersonas() {
         gestionarPersonas(); // Volver al menú de personas después de manejar una opción
     }
 }
-
 function App() {
-    echo "Bienvenido a la App de Viajes! Para continuar seleccione una opcion \n";
+    echo "Bienvenido a la App de Viajes ✈️🌍️! Para continuar seleccione una opcion \n";
     mostrarMenuPrincipal();
     echo "Opción: ";
     $opcionUser = trim(fgets(STDIN));
@@ -578,42 +612,11 @@ function App() {
             echo "Gracias por usar la App de Viajes. ¡Adiós!\n";
             break;
         default:
-            echo "Opción no válida, por favor seleccione una opción válida \n";
+            imprimirEnRojo("Opción no válida, por favor seleccione una opción válida \n"); 
             App();
             break;
     }
 }
-
-
-// funciones agregadas
-
-function imprimirEnVerde($texto) {
-    echo "\033[0;32m" . $texto . "\033[0m";
-}
-
-function imprimirEnRojo($texto) {
-    echo "\033[0;31m" . $texto . "\033[0m";
-}
-
-function mostrarMenuModificacionPersona() {
-    echo "1) Modificar Nombre \n";
-    echo "2) Modificar Apellido \n";
-    echo "3) Modificar Telefono \n";
-}
-
-function mostrarMenuModificacionEmpresa() {
-    echo "1) Modificar Nombre \n";
-    echo "2) Modificar Dirección \n";
-}
-
-function mostrarMenuModificacionViaje() {
-    echo "1) Modificar Destino \n";
-    echo "2) Modificar Importe \n";
-    echo "3) Modificar Cantidad Máxima de Pasajeros \n";
-}
-
-
-
 // Iniciar la aplicación
 App();
 
