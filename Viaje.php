@@ -22,8 +22,7 @@ class Viaje{
 	private $rnumeroempleado;
 	private $vimporte;
     private $mensajeoperacion;
-	
-	// private $colObjPasajeros;
+	private $colObjPasajeros = [];
 	// implementar opciones de agregar pasajeros y responsables
 
 	public function __construct(){
@@ -69,6 +68,10 @@ class Viaje{
 		$this->mensajeoperacion=$mensajeoperacion;
 	}
 
+	public function setColObjPasajeros($newColObjPasajeros){
+		$this->colObjPasajeros=$newColObjPasajeros;
+	}
+
 	public function getIdViaje(){
 		return $this->idviaje;
 	}
@@ -90,10 +93,10 @@ class Viaje{
 	public function getmensajeoperacion(){
 		return $this->mensajeoperacion ;
 	}
-	
-	
-	
 
+	public function getColObjPasajeros(){
+		return $this->colObjPasajeros;
+	}
 		
 
 	/**
@@ -235,5 +238,18 @@ class Viaje{
 	    	"\nID Empresa: ".$this->getIdEmpresa()."\nID Empleado: ".$this->getRnumeroempleado()."\nImporte: ".$this->getVimporte()."\n";
 			
 	}
+
+	public function agregarPasajero($pasajero) {
+		$pasajeroAgregado = false;
+		$colObjPasajeros = $this->getColObjPasajeros();
+        if (count($colObjPasajeros) < $this->getVcantmaxpasajeros()) {
+            array_push($colObjPasajeros, $pasajero);
+			$this->setColObjPasajeros($colObjPasajeros);
+            $pasajeroAgregado = true;
+        } 
+		return $pasajeroAgregado;
+    }
+
+
 }
 ?>
