@@ -1,39 +1,19 @@
 <?php 
 include_once "BaseDatos.php";
 class Pasajero extends Persona{
-    private $pnombre;
-    private $papellido;
-    private $nrodoc;
-    private $ptelefono;
     private $pasaporte;
     private $idviaje;
     public function __construct() {
-        
         parent::__construct();
         $this->pasaporte = "";
         $this->idviaje = "";
     }
-    
-
     public function cargar($NroD,$Nom,$Ape,$ptelefono,$pasaporte=null,$idviaje=null){
-        
         parent::cargar($NroD,$Nom,$Ape,$ptelefono);
         $this->setPasaporte($pasaporte);
-        $this->setIdviaje($idviaje);
+		$this->setIdviaje($idviaje);
     }
     //getters
-    public function getNrodoc() { 
-        return $this->nrodoc; 
-    }
-    public function getPNombre() { 
-        return $this->pnombre; 
-    }
-    public function getPApellido() { 
-        return $this->papellido; 
-    }
-    public function getPTelefono() { 
-        return $this->ptelefono; 
-    }
     public function getPasaporte() {
         return $this->pasaporte;
     }
@@ -41,18 +21,6 @@ class Pasajero extends Persona{
         return $this->idviaje;
     }
     //setters   
-    public function setNrodoc($nrodoc) { 
-        $this->nrodoc = $nrodoc; 
-    }
-    public function setPNombre($pnombre) { 
-        $this->pnombre = $pnombre; 
-    }
-    public function setPApellido($papellido) { 
-        $this->papellido = $papellido; 
-    }
-    public function setPTelefono($ptelefono) { 
-        $this->ptelefono = $ptelefono; 
-    }
     public function setPasaporte($pasaporte) {
         $this->pasaporte = $pasaporte;
     }
@@ -89,52 +57,58 @@ class Pasajero extends Persona{
 		 return $resp;
 	}	
    
-    public  function listar($condicion=""){
-	    $arreglo = null;
-		$base=new BaseDatos();
-		$consulta="Select * from pasajero ";
-		if ($condicion!=""){
-		    $consulta=$consulta.' where '.$condicion;
-		}
-		$consulta.=" order by pasaporte";
-		//echo $consultaPersonas;
-		if($base->Iniciar()){
-		    if($base->Ejecutar($consulta)){				
-			    $arreglo= array();
-				while($row2=$base->Registro()){
-					$obj=new Pasajero();
-					$obj->Buscar($row2['nrodoc']);
-                    
-					array_push($arreglo,$obj);
-				}
-		 	}	else {
-		 			$this->setmensajeoperacion($base->getError());
-			}
-		 }	else {
-		 		$this->setmensajeoperacion($base->getError());
-		 }	
-		 return $arreglo;
-	}		
-    
-    public function insertar(){
-		$base=new BaseDatos();
-		$resp= false;
+	public function listar($condicion = "") {
+		$arreglo = null;
+		$base = new BaseDatos();
+		$consulta = "SELECT * FROM pasajero";
 		
-		if(parent::insertar()){
-		    $consultaInsertar="INSERT INTO pasajero(nrodoc, idviaje, pasaporte)
-				VALUES (".$this->getNrodoc().",'".$this->getIdviaje().",'".$this->getPasaporte()."')";
-		    if($base->Iniciar()){
-		        if($base->Ejecutar($consultaInsertar)){
-		            $resp=  true;
-		        }	else {
-		            $this->setmensajeoperacion($base->getError());
-		        }
-		    } else {
-		        $this->setmensajeoperacion($base->getError());
-		    }
-		 }
+		if ($condicion != "") {
+			$consulta .= " WHERE " . $condicion;
+		}
+		
+		$consulta .= " ORDER BY pasaporte";
+		
+		if ($base->Iniciar()) {
+			if ($base->Ejecutar($consulta)) {
+				$arreglo = array();
+				while ($row2 = $base->Registro()) {
+					$obj = new Pasajero();
+					$obj->Buscar($row2['nrodoc']);
+					array_push($arreglo, $obj);
+				}
+			} else {
+				$this->setmensajeoperacion($base->getError());
+			}
+		} else {
+			$this->setmensajeoperacion($base->getError());
+		}
+		
+		return $arreglo;
+	}
+		
+    
+	public function insertar() {
+		$base = new BaseDatos();
+		$resp = false;
+	
+		if (parent::insertar()) {
+			$consultaInsertar = "INSERT INTO pasajero (nrodoc, pasaporte, idviaje)
+                             VALUES (".$this->getNrodoc().", '".$this->getPasaporte()."', ".$this->getIdviaje().")";
+								 
+			if ($base->Iniciar()) {
+				if ($base->Ejecutar($consultaInsertar)) {
+					$resp = true;
+				} else {
+					$this->setmensajeoperacion($base->getError());
+				}
+			} else {
+				$this->setmensajeoperacion($base->getError());
+			}
+		}
 		return $resp;
 	}
+	
+	
 	
 	
 	
@@ -179,7 +153,7 @@ class Pasajero extends Persona{
 	}
     public function __toString(){
         $resp= parent::__toString();
-        $resp=$resp."Pasaporte: ".$this->getPasaporte()."\n"."IdViaje: ".$this->getIdviaje();
+        $resp=$resp."Pasaporte: ".$this->getPasaporte()."\n"."IdViaje: ".$this->getIdviaje() . "\n";
 	    return $resp;
 			
 	}

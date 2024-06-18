@@ -68,7 +68,7 @@ function gestionarViajes() {
     mostrarMenuViajes();
     echo "Opción: ";
     $opcionUserViaje = trim(fgets(STDIN));
-
+    $viaje = new Viaje(); 
     if ($opcionUserViaje == 5) {
         App();
     } else {
@@ -76,9 +76,7 @@ function gestionarViajes() {
         switch($opcionUserViaje) {
             case 1:
                 // Ver Lista de Viajes
-                $viaje = new Viaje(); // creamos la instancia de viaje que se conecta a la BD
                 $listaViajes = $viaje->listar(); // obtenemos la lista de viajes
-
                 if ($listaViajes) {
                     echo "Viajes encontrados: \n";
                     foreach ($listaViajes as $viaje) {
@@ -91,15 +89,94 @@ function gestionarViajes() {
                 break;
             case 2:
                 // Agregar Viaje
-                echo "agregamos viaje";
+                echo "Ingrese un destino: ";
+                $destino = trim(fgets(STDIN));
+                echo "Ingrese la cantidad máxima de pasajeros: ";
+                $cantMaxPasajeros = trim(fgets(STDIN));
+                $empresa = new Empresa();
+                $listaEmpresas = $empresa->listar();
+                if ($listaEmpresas) {
+                    echo "Empresas encontradas: \n";
+                    foreach ($listaEmpresas as $empresa) {
+                        echo "/" . $empresa->getIdEmpresa() . "/";
+                    }
+                    echo "\n";
+                } 
+                echo "Ingrese el ID de la empresa: "; // presentamos una lista de empresas para mejor entendimiento
+                $idEmpresa = trim(fgets(STDIN));
+                if ($empresa->buscar($idEmpresa)) {
+                    echo "Ingrese el documento del responsable: "; // lo hacemos por documento dado que buscar() es por DNI
+                    $dniEmpleado = trim(fgets(STDIN));
+                    $responsable = new ResponsableV();
+                    if ($responsable->buscar($dniEmpleado)) {
+                        $numeroEmpleado = $responsable->getRnumeroempleado();
+                        echo "Ingrese el importe: ";
+                        $importe = trim(fgets(STDIN));
+                        $viaje->cargar(0, $destino, $cantMaxPasajeros, $idEmpresa, $numeroEmpleado, $importe); 
+                        $insert = $viaje->insertar();
+                        if ($insert) {
+                            imprimirEnVerde("Viaje agregado exitosamente \n");
+                        } else {
+                            imprimirEnRojo("Error al agregar el viaje \n");
+                        }
+                    } else {
+                        imprimirEnRojo("Responsable no encontrado \n");
+                    }
+                } else {
+                    imprimirEnRojo("Empresa no encontrada \n");
+                }
                 break;
             case 3:
-                // Modificar Viaje
-                echo "modificamos viaje";
+                // Modificar Viaje (destino e importe)
+                echo "Ingrese el ID del viaje a modificar: ";
+                $idViaje = trim(fgets(STDIN));
+                $found = $viaje->Buscar($idViaje);
+                if ($found) {
+                    echo "Que desea modificar? \n";
+                    mostrarMenuModificacionViaje();
+                    echo "Opción: ";
+                    $opcionModificacionViaje = trim(fgets(STDIN));
+                    switch($opcionModificacionViaje) {
+                        case 1:
+                            echo "Ingrese el nuevo destino: ";
+                            $nuevoDestino = trim(fgets(STDIN));
+                            $viaje->setVdestino($nuevoDestino);
+                            $viaje->modificar();
+                            imprimirEnVerde("Destino modificado exitosamente \n");
+                            break;
+                        case 2:
+                            echo "Ingrese el nuevo importe: ";
+                            $nuevoImporte = trim(fgets(STDIN));
+                            $viaje->setVimporte($nuevoImporte);
+                            $viaje->modificar();
+                            imprimirEnVerde("Importe modificado exitosamente \n");
+                            break;
+                        case 3:
+                            echo "Ingrese la nueva cantidad máxima de pasajeros: ";
+                            $nuevaCantMaxPasajeros = trim(fgets(STDIN));
+                            $viaje->setVcantmaxpasajeros($nuevaCantMaxPasajeros);
+                            $viaje->modificar();
+                            imprimirEnVerde("Cantidad máxima de pasajeros modificada exitosamente \n");
+                            break;
+                        default:
+                            imprimirEnRojo("Opción no válida, por favor seleccione una opción válida \n");
+                            break;
+                    }
+                } else {
+                    imprimirEnRojo("El viaje no se encuentra registrado \n");
+                }
                 break;
             case 4:
                 // Eliminar Viaje
-                echo "eliminamos viaje";
+                echo "Ingrese el ID del viaje a eliminar: ";
+                $idViaje = trim(fgets(STDIN));
+                $found = $viaje->Buscar($idViaje);
+                if ($found) {
+                    $viaje->eliminar();
+                    imprimirEnVerde("Viaje eliminado exitosamente \n");
+                } else {
+                    imprimirEnRojo("El viaje no se encuentra registrado \n");
+                }
                 break;
             default:
                 echo "Opción no válida, por favor seleccione una opción válida \n";
@@ -206,11 +283,85 @@ function gestionarPasajeros() {
     mostrarMenuPasajeros();
     echo "Opción: ";
     $opcionUserPasajero = trim(fgets(STDIN));
-
+    $pasajero = new Pasajero();
+    $viaje = new Viaje();
     if ($opcionUserPasajero == 5) {
         App();
     } else {
-        // Aquí puedes añadir más casos para las opciones del menú de pasajeros
+        switch($opcionUserPasajero) {
+            case 1: 
+                // Ver Lista de Pasajeros segun el id del viaje
+                echo "Ingrese el ID del viaje: ";
+                $idViaje = trim(fgets(STDIN));
+                $found = $viaje->Buscar($idViaje);
+                if ($found){
+                    $listaPasajeros = $pasajero->listar("idviaje = $idViaje");
+                    if ($listaPasajeros) {
+                        echo "Pasajeros encontrados: \n";
+                        foreach ($listaPasajeros as $pasajero) {
+                            echo "--------------------------------\n";
+                            imprimirEnVerde($pasajero);
+                        }
+                    } else {
+                        echo "No se encontraron pasajeros.\n";
+                    }
+                }
+                break;
+            case 2: 
+                // Agregar Pasajero
+                echo "Ingrese el id del viaje: ";
+                $idViaje = trim(fgets(STDIN));
+                $found = $viaje->Buscar($idViaje);
+                if ($found) {
+                    $colObjPasajerosBd = $pasajero->listar("idviaje = $idViaje");
+                    foreach ($colObjPasajerosBd as $pasajeroBd) {
+                        $viaje->agregarPasajero($pasajeroBd);
+                    }
+                    $colObjPasajeros = $viaje->getColObjPasajeros();
+                    $cantPasajeros = count($colObjPasajeros);
+                    $cantMax = $viaje->getVcantmaxpasajeros();
+                    if ($cantPasajeros >= $cantMax) {
+                        imprimirEnRojo("El viaje se encuentra completo: " . $cantPasajeros . "/" . $cantMax . "\n");
+                    } else {
+                        echo "Ingrese el documento del pasajero: ";
+                        $documentoPasajero = trim(fgets(STDIN));
+                        $found = $pasajero->Buscar($documentoPasajero);
+                        if ($found){
+                            imprimirEnRojo("El pasajero ya se encuentra registrado \n");
+                        } else {
+                            echo "Ingrese el pasaporte del pasajero: ";
+                            $pasaporte = trim(fgets(STDIN));
+                            echo "Ingrese el nombre del pasajero: ";
+                            $nombrePasajero = trim(fgets(STDIN));
+                            echo "Ingrese el apellido del pasajero: ";
+                            $apellidoPasajero = trim(fgets(STDIN));
+                            echo "Ingrese el telefono del pasajero: ";
+                            $telefonoPasajero = trim(fgets(STDIN));
+                            // antes de insertar los datos, verificamos que se pueda agregar al pasajero
+                            $pasajero->cargar($documentoPasajero, $nombrePasajero, $apellidoPasajero, $telefonoPasajero, $pasaporte, $idViaje);
+                            $agregarPasajero = $viaje->agregarPasajero($pasajero);
+                            // ademas, agregamos los pasajeros de la base de datos
+                            if ($agregarPasajero) {
+                                $cantPasajerosNueva = count($viaje->getColObjPasajeros());
+                                $insert = $pasajero->insertar();
+                                if ($insert) {
+                                    imprimirEnVerde("Pasajero agregado exitosamente: " . $cantPasajerosNueva . "/" . $cantMax . "\n");
+                                } 
+                            }
+                        }
+                    }
+                } else {
+                    imprimirEnRojo("El viaje no se encuentra registrado \n");
+                }    
+                break;
+            case 3:
+                // Modificar Pasajero
+            case 4: 
+                // Eliminar Pasajero
+            default:
+                echo "Opción no válida, por favor seleccione una opción válida \n";
+                break;
+        }
         gestionarPasajeros(); // Volver al menú de pasajeros después de manejar una opción
     }
 }
@@ -454,6 +605,13 @@ function mostrarMenuModificacionEmpresa() {
     echo "1) Modificar Nombre \n";
     echo "2) Modificar Dirección \n";
 }
+
+function mostrarMenuModificacionViaje() {
+    echo "1) Modificar Destino \n";
+    echo "2) Modificar Importe \n";
+    echo "3) Modificar Cantidad Máxima de Pasajeros \n";
+}
+
 
 
 // Iniciar la aplicación
