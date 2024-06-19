@@ -103,7 +103,7 @@ function gestionarViajes() {
                         imprimirEnVerde($viaje);
                     }
                 } else {
-                    echo "No se encontraron viajes.\n";
+                    imprimirEnRojo("No se encontraron viajes.\n");
                 }
                 break;
             case 2:
@@ -225,7 +225,7 @@ function gestionarEmpresas() {
                         imprimirEnVerde($empresa);
                     }
                 } else {
-                    echo "No se encontraron empresas.\n";
+                    imprimirEnRojo("No se encontraron empresas.\n");
                 }
                 break;
             case 2: 
@@ -293,6 +293,7 @@ function gestionarEmpresas() {
         gestionarEmpresas(); // Volver al menú de empresas después de manejar una opción
     }
 }
+
 function gestionarPasajeros() {
     mostrarMenuPasajeros();
     echo "Opción: ";
@@ -316,8 +317,10 @@ function gestionarPasajeros() {
                             imprimirEnVerde($pasajero);
                         }
                     } else {
-                        echo "No se encontraron pasajeros.\n";
+                        imprimirEnRojo("No se encontraron pasajeros para el viaje \n");
                     }
+                } else {
+                    imprimirEnRojo("El viaje no se encuentra registrado \n");
                 }
                 break;
             case 2: 
@@ -421,7 +424,7 @@ function gestionarResponsables() {
                         imprimirEnVerde($responsable);
                     }
                 } else {
-                    echo "No se encontraron responsables.\n";
+                    imprimirEnRojo("No se encontraron responsables.\n");
                 }
                 break;
             case 2:
@@ -496,7 +499,7 @@ function gestionarPersonas() {
                         imprimirEnVerde($persona);
                     }
                 } else {
-                    echo "No se encontraron personas.\n";
+                    imprimirEnRojo("No se encontraron personas.\n");
                 }
                 break;
             case 2:
