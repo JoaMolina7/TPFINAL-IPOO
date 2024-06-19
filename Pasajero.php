@@ -33,7 +33,7 @@ class Pasajero extends Persona{
 	 * @param int $dni
 	 * @return true en caso de encontrar los datos, false en caso contrario 
 	 */		
-    public function Buscar($dni){
+    public function Buscar($dni){ // Buscar por id 
 		$base=new BaseDatos();
 		$consulta="Select * from pasajero where nrodoc=".$dni;
 		$resp= false;
@@ -116,6 +116,7 @@ class Pasajero extends Persona{
 	    $resp =false; 
 	    $base=new BaseDatos();
 	    if(parent::modificar()){
+			// buscar pasajero
 	        $consultaModifica="UPDATE pasajero SET idviaje='".$this->getIdviaje()."', pasaporte='".$this->getPasaporte()."' WHERE nrodoc=". $this->getNrodoc();
 	        if($base->Iniciar()){
 	            if($base->Ejecutar($consultaModifica)){
@@ -136,6 +137,7 @@ class Pasajero extends Persona{
 		$base=new BaseDatos();
 		$resp=false;
 		if($base->Iniciar()){
+			// buscar y despues eliminar
 				$consultaBorra="DELETE FROM pasajero WHERE nrodoc=".$this->getNrodoc();
 				if($base->Ejecutar($consultaBorra)){
 				    if(parent::eliminar()){

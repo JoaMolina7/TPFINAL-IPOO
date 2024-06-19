@@ -196,6 +196,7 @@ function gestionarViajes() {
                 } else {
                     imprimirEnRojo("El viaje no se encuentra registrado \n");
                 }
+                // CORRECCION: eliminar los pasajeros antes de eliminar el viaje
                 break;
             default:
                 echo "Opción no válida, por favor seleccione una opción válida \n";

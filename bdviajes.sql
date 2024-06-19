@@ -7,7 +7,7 @@ CREATE TABLE empresa(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE persona(
-    nrodoc int,
+    nrodoc int, -- implementar id como primary
     pnombre varchar(150),
     papellido varchar(150),
     ptelefono int,
@@ -42,7 +42,7 @@ CREATE TABLE pasajero(
     pasaporte varchar(15),
 	idviaje int,
     PRIMARY KEY (pasaporte),
-	FOREIGN KEY (idviaje) REFERENCES viaje (idviaje),
+	FOREIGN KEY (idviaje) REFERENCES viaje (idviaje), -- tiene restrict
     FOREIGN KEY (nrodoc) REFERENCES persona (nrodoc) ON UPDATE CASCADE ON DELETE CASCADE	
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
  

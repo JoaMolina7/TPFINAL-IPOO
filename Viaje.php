@@ -22,7 +22,6 @@ class Viaje{
 	private $rnumeroempleado;
 	private $vimporte;
     private $mensajeoperacion;
-	private $totalRecaudado;
 	private $colObjPasajeros = [];
 	// implementar opciones de agregar pasajeros y responsables
 
@@ -202,6 +201,7 @@ class Viaje{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
+		// busco y despues acciono
 		$consultaModifica = "UPDATE viaje SET 
                         vdestino = '".$this->getVdestino()."', 
                         vcantmaxpasajeros = ".$this->getVcantmaxpasajeros().", 
@@ -228,6 +228,7 @@ class Viaje{
 		$base=new BaseDatos();
 		$resp=false;
 		if($base->Iniciar()){
+			// verificar y despues eliminar
 				$consultaBorra="DELETE FROM viaje WHERE idviaje=".$this->getIdViaje();
 				if($base->Ejecutar($consultaBorra)){
 				    $resp=  true;

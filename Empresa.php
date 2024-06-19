@@ -55,10 +55,6 @@ class Empresa{
 	}
 	
 	
-	
-
-		
-
 	/**
 	 * Recupera los datos de una empresa por id
 	 * @param int $id
@@ -154,6 +150,7 @@ class Empresa{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
+		// validar existencia de empresa
 		$consultaModifica = "UPDATE empresa SET enombre='".$this->getENombre()."', edireccion='".$this->getEdireccion()."' WHERE idempresa=".$this->getIdEmpresa();
 		if($base->Iniciar()){
 			if($base->Ejecutar($consultaModifica)){
@@ -173,6 +170,7 @@ class Empresa{
 		$base=new BaseDatos();
 		$resp=false;
 		if($base->Iniciar()){
+			// validacion de empresa
 				$consultaBorra="DELETE FROM empresa WHERE idempresa=".$this->getIdEmpresa();
 				if($base->Ejecutar($consultaBorra)){
 				    $resp=  true;
