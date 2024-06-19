@@ -410,6 +410,8 @@ function gestionarResponsables() {
     echo "Opción: ";
     $opcionUserResponsable = trim(fgets(STDIN));
     $responsable = new ResponsableV();
+    $pasajero = new Pasajero();
+    $persona = new Persona();
     if ($opcionUserResponsable == 5) {
         App();
     } else {
@@ -436,16 +438,28 @@ function gestionarResponsables() {
                 if ($found) {
                     imprimirEnRojo("El responsable ya se encuentra registrado \n");
                 } else {
-                    echo "Ingrese el numero de licencia del responsable: ";
-                    $numeroLicencia = trim(fgets(STDIN));
-                    $responsable->setNrodoc($documentoResponsable);
-                    $responsable->setRNumeroLicencia($numeroLicencia);
-                    $responsable->setRnumeroempleado(0);
-                    $insert = $responsable->insertar();
-                    if ($insert) {
-                        imprimirEnVerde("Responsable agregado exitosamente \n");
+                    // verificamos que primero sea una persona
+                    $foundPersona = $persona->Buscar($documentoResponsable);
+                    if ($foundPersona){
+                    // verificamos que no sea pasajero
+                    $foundPasajero = $pasajero->Buscar($documentoResponsable);
+                    if ($foundPasajero) {
+                        imprimirEnRojo("La persona es un pasajero, no puede ser responsable \n");
                     } else {
-                        imprimirEnRojo("Error al agregar el responsable \n");
+                        echo "Ingrese el numero de licencia del responsable: ";
+                        $numeroLicencia = trim(fgets(STDIN));
+                        $responsable->setNrodoc($documentoResponsable);
+                        $responsable->setRNumeroLicencia($numeroLicencia);
+                        $responsable->setRnumeroempleado(0);
+                        $insert = $responsable->insertar();
+                        if ($insert) {
+                            imprimirEnVerde("Responsable agregado exitosamente \n");
+                        } else {
+                            imprimirEnRojo("Error al agregar el responsable \n");
+                        }
+                    }
+                    } else {
+                        imprimirEnRojo("La persona no se encuentra registrada con ese DNI \n");
                     }
                 }
                 break;
