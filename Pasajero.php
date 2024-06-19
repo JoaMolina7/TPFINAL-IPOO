@@ -91,7 +91,7 @@ class Pasajero extends Persona{
 		$base = new BaseDatos();
 		$resp = false;
 	
-		if (parent::insertar()) {
+		if ($base->iniciar()) {
 			$consultaInsertar = "INSERT INTO pasajero (nrodoc, pasaporte, idviaje)
                              VALUES (".$this->getNrodoc().", '".$this->getPasaporte()."', ".$this->getIdviaje().")";
 								 

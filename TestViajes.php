@@ -300,6 +300,7 @@ function gestionarPasajeros() {
     $opcionUserPasajero = trim(fgets(STDIN));
     $pasajero = new Pasajero();
     $viaje = new Viaje();
+    $persona = new Persona();
     if ($opcionUserPasajero == 5) {
         App();
     } else {
@@ -341,29 +342,36 @@ function gestionarPasajeros() {
                     } else {
                         echo "Ingrese el documento del pasajero: ";
                         $documentoPasajero = trim(fgets(STDIN));
-                        $found = $pasajero->Buscar($documentoPasajero);
+                        // buscamos si el pasajero ya se encuentra registrado en ese vuelo y ademas que exista una persona
+                        $found = $pasajero->listar("idviaje = $idViaje and nrodoc = $documentoPasajero");
                         if ($found){
                             imprimirEnRojo("El pasajero ya se encuentra registrado \n");
                         } else {
+                            // verificamos que la persona exista
+                            $foundPersona = $persona->Buscar($documentoPasajero);
+                            if (!$foundPersona) {
+                                imprimirEnRojo("La persona no se encuentra registrada con ese DNI \n");
+                            } else {
+                            // si la persona se encuentra , agregamos el pasajero
                             echo "Ingrese el pasaporte del pasajero: ";
                             $pasaporte = trim(fgets(STDIN));
-                            echo "Ingrese el nombre del pasajero: ";
-                            $nombrePasajero = trim(fgets(STDIN));
-                            echo "Ingrese el apellido del pasajero: ";
-                            $apellidoPasajero = trim(fgets(STDIN));
-                            echo "Ingrese el telefono del pasajero: ";
-                            $telefonoPasajero = trim(fgets(STDIN));
-                            // antes de insertar los datos, verificamos que se pueda agregar al pasajero
-                            $pasajero->cargar($documentoPasajero, $nombrePasajero, $apellidoPasajero, $telefonoPasajero, $pasaporte, $idViaje);
-                            $agregarPasajero = $viaje->agregarPasajero($pasajero);
-                            // ademas, agregamos los pasajeros de la base de datos
-                            if ($agregarPasajero) {
-                                $cantPasajerosNueva = count($viaje->getColObjPasajeros());
-                                $insert = $pasajero->insertar();
-                                if ($insert) {
-                                    imprimirEnVerde("Pasajero agregado exitosamente: " . $cantPasajerosNueva . "/" . $cantMax . "\n") .  "\n" . 
-                                    imprimirEnVerde("Valor: $" . $viaje->getVimporte() . "\n");     
-                                } 
+                            // verificamos que nadie tenga el mismo pasaporte
+                            $foundPasaporte = $pasajero->listar("pasaporte = $pasaporte");
+                            if ($foundPasaporte) {
+                                imprimirEnRojo("El pasaporte ya se encuentra registrado \n");
+                            } else {
+                                $pasajero->cargar($documentoPasajero, "", "", "", $pasaporte, $idViaje);
+                                $agregarPasajero = $viaje->agregarPasajero($pasajero);
+                                // ademas, agregamos los pasajeros de la base de datos
+                                if ($agregarPasajero) {
+                                    $cantPasajerosNueva = count($viaje->getColObjPasajeros());
+                                    $insert = $pasajero->insertar();
+                                    if ($insert) {
+                                        imprimirEnVerde("Pasajero agregado exitosamente: " . $cantPasajerosNueva . "/" . $cantMax . "\n") .  "\n" . 
+                                        imprimirEnVerde("Valor: $" . $viaje->getVimporte() . "\n");     
+                                        } 
+                                    }
+                                }   
                             }
                         }
                     }

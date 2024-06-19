@@ -16,7 +16,7 @@ CREATE TABLE persona(
 
 CREATE TABLE responsableV(
     rnumeroempleado int AUTO_INCREMENT,
-    rnumerolicencia int,<
+    rnumerolicencia int,
 	nrodoc int,
     PRIMARY KEY (rnumeroempleado),
     FOREIGN KEY (nrodoc) REFERENCES persona (nrodoc) ON UPDATE CASCADE ON DELETE CASCADE
