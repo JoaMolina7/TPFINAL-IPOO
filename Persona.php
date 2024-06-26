@@ -133,7 +133,8 @@ class Persona {
 							 VALUES ('" . $this->getNrodoc() . "','" . $this->getPApellido() . "','" . $this->getPNombre() . "','" . $this->getPTelefono() . "')";
 	
 		if ($base->Iniciar()) {
-			if ($base->Ejecutar($consultaInsertar)) {
+			if ($id = $base->devuelveIDInsercion($consultaInsertar)) {
+				$this->setId($id);
 				$resp = true;
 			} else {
 				$this->setmensajeoperacion($base->getError());

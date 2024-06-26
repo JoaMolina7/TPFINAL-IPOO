@@ -10,7 +10,7 @@ class ResponsableV extends Persona{
     }
     public function cargar($id,$NroD,$Nom,$Ape,$ptelefono,$rnumeroempleado=null,$rnumerolicencia=null){
         
-        parent::cargar($id, $NroD,$Nom,$Ape,$ptelefono);
+        parent::cargar($id,$NroD,$Nom,$Ape,$ptelefono);
         $this->setRnumeroempleado($rnumeroempleado);
         $this->setRnumerolicencia($rnumerolicencia);
     }

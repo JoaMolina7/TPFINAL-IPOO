@@ -17,7 +17,7 @@ class BaseDatos {
         $this->HOSTNAME = "127.0.0.1";
         $this->BASEDATOS = "bdviajes";
         $this->USUARIO = "root";
-        $this->CLAVE="root";
+        $this->CLAVE="";
         $this->RESULT=null;
         $this->QUERY="";
         $this->ERROR="";

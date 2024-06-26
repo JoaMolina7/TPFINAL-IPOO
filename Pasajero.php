@@ -92,9 +92,9 @@ class Pasajero extends Persona{
 		$base = new BaseDatos();
 		$resp = false;
 	
-		if ($base->iniciar()) {
+		if ($base->Iniciar()) {
 			$consultaInsertar = "INSERT INTO pasajero (id, pasaporte, idviaje)
-                             VALUES (".$this->getId().", '".$this->getPasaporte()."', ".$this->getIdviaje().")";
+                             VALUES ('".$this->getId()."','".$this->getPasaporte()."','".$this->getIdviaje()."')";
 								 
 			if ($base->Iniciar()) {
 				if ($base->Ejecutar($consultaInsertar)) {
@@ -118,7 +118,7 @@ class Pasajero extends Persona{
 	    $base=new BaseDatos();
 		$consulta = "SELECT * FROM pasajero WHERE id=".$this->getId();
 		$found = false;
-		if ($base->iniciar()) {
+		if ($base->Iniciar()) {
 			if ($base->Ejecutar($consulta)) {
 				$row2 = $base->Registro();
 				if ($row2['id'] == $this->getId()) {

@@ -203,8 +203,7 @@ class Viaje{
 	    $base=new BaseDatos();
 		$consulta = "SELECT * FROM viaje WHERE idviaje=".$this->getIdViaje();
 		$found = false;
-		if ($found) {
-			if ($base->iniciar()) {
+			if ($base->Iniciar()) {
 				if ($base->Ejecutar($consulta)) {
 					$row2 = $base->Registro();
 					if ($row2['idviaje'] == $this->getIdViaje()) {
@@ -212,7 +211,7 @@ class Viaje{
 					}
 				}
 			}
-		}
+		
 		if ($found) {
 		$consultaModifica = "UPDATE viaje SET 
                         vdestino = '".$this->getVdestino()."', 

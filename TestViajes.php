@@ -73,6 +73,7 @@ function mostrarMenuModificacionViaje() {
     echo "1) Modificar Destino \n";
     echo "2) Modificar Importe \n";
     echo "3) Modificar Cantidad Máxima de Pasajeros \n";
+    echo "4) Modificar Responsable \n";
 }
 
 // Implementacion de funciones para gestionar las opciones del menu
@@ -176,6 +177,19 @@ function gestionarViajes() {
                             $viaje->setVcantmaxpasajeros($nuevaCantMaxPasajeros);
                             $viaje->modificar();
                             imprimirEnVerde("Cantidad máxima de pasajeros modificada exitosamente \n");
+                            break;
+                        case 4: 
+                            echo "Ingrese el ID del nuevo responsable: ";
+                            $idResponsable = trim(fgets(STDIN));
+                            $responsable = new ResponsableV();
+                            if ($responsable->Buscar($idResponsable)) {
+                                $numeroEmpleadoNew = $responsable->getRnumeroempleado();
+                                $viaje->setRnumeroempleado($numeroEmpleadoNew);
+                                $viaje->modificar();
+                                imprimirEnVerde("Responsable modificado exitosamente \n");
+                            } else {
+                                imprimirEnRojo("Responsable no encontrado \n");
+                            }
                             break;
                         default:
                             imprimirEnRojo("Opción no válida, por favor seleccione una opción válida \n");
@@ -314,6 +328,7 @@ function gestionarPasajeros() {
     $pasajero = new Pasajero();
     $viaje = new Viaje();
     $persona = new Persona();
+    $responsable = new ResponsableV();
     if ($opcionUserPasajero == 5) {
         App();
     } else {
@@ -337,61 +352,68 @@ function gestionarPasajeros() {
                     imprimirEnRojo("El viaje no se encuentra registrado \n");
                 }
                 break;
-            case 2: 
-                // Agregar Pasajero
-                echo "Ingrese el id del viaje: ";
-                $idViaje = trim(fgets(STDIN));
-                $found = $viaje->Buscar($idViaje);
-                if ($found) {
-                    $colObjPasajerosBd = $pasajero->listar("idviaje = $idViaje");
-                    foreach ($colObjPasajerosBd as $pasajeroBd) {
-                        $viaje->agregarPasajero($pasajeroBd);
-                    }
-                    $colObjPasajeros = $viaje->getColObjPasajeros();
-                    $cantPasajeros = count($colObjPasajeros);
-                    $cantMax = $viaje->getVcantmaxpasajeros();
-                    if ($cantPasajeros >= $cantMax) {
-                        imprimirEnRojo("El viaje se encuentra completo: " . $cantPasajeros . "/" . $cantMax . "\n");
-                    } else {
-                        echo "Ingrese el id del pasajero: ";
-                        $idPasajero = trim(fgets(STDIN));
-                        // buscamos si el pasajero ya se encuentra registrado en ese vuelo y ademas que exista una persona
-                        $found = $pasajero->listar("id = $idPasajero");
-                        if ($found){
-                            imprimirEnRojo("El pasajero ya se encuentra registrado \n");
+                case 2: 
+                    // Agregar Pasajero
+                    echo "Ingrese el id del viaje: ";
+                    $idViaje = trim(fgets(STDIN));
+                    $found = $viaje->Buscar($idViaje);
+                    if ($found) {
+                        $colObjPasajerosBd = $pasajero->listar("idviaje = $idViaje");
+                        foreach ($colObjPasajerosBd as $pasajeroBd) {
+                            $viaje->agregarPasajero($pasajeroBd);
+                        }
+                        $colObjPasajeros = $viaje->getColObjPasajeros();
+                        $cantPasajeros = count($colObjPasajeros);
+                        $cantMax = $viaje->getVcantmaxpasajeros();
+                        if ($cantPasajeros >= $cantMax) {
+                            imprimirEnRojo("El viaje se encuentra completo: " . $cantPasajeros . "/" . $cantMax . "\n");
                         } else {
-                            // verificamos que la persona exista
-                            $foundPersona = $persona->Buscar($idPasajero);
-                            if (!$foundPersona) {
-                                imprimirEnRojo("La persona no se encuentra registrada con ese ID \n");
+                            echo "Ingrese el id del pasajero: ";
+                            $idPasajero = trim(fgets(STDIN));
+                            // buscamos si el pasajero ya se encuentra registrado en ese vuelo y ademas que exista una persona
+                            $found = $pasajero->listar("id = $idPasajero");
+                            if ($found){
+                                imprimirEnRojo("El pasajero ya se encuentra registrado \n");
                             } else {
-                            // si la persona se encuentra , agregamos el pasajero
-                            echo "Ingrese el pasaporte del pasajero: ";
-                            $pasaporte = trim(fgets(STDIN));
-                            // verificamos que nadie tenga el mismo pasaporte
-                            $foundPasaporte = $pasajero->listar("pasaporte = $pasaporte");
-                            if ($foundPasaporte) {
-                                imprimirEnRojo("El pasaporte ya se encuentra registrado \n");
-                            } else {
-                                $pasajero->cargar($idPasajero, "", "", "", $pasaporte, $idViaje);
-                                $agregarPasajero = $viaje->agregarPasajero($pasajero);
-                                // ademas, agregamos los pasajeros de la base de datos
-                                if ($agregarPasajero) {
-                                    $cantPasajerosNueva = count($viaje->getColObjPasajeros());
-                                    $insert = $pasajero->insertar();
-                                    if ($insert) {
-                                        imprimirEnVerde("Pasajero agregado exitosamente: " . $cantPasajerosNueva . "/" . $cantMax . "\n") .  "\n" . 
-                                        imprimirEnVerde("Valor: $" . $viaje->getVimporte() . "\n");     
-                                        } 
+                                // verificamos que la persona exista
+                                $foundPersona = $persona->Buscar($idPasajero);
+                                if ($foundPersona) {
+                                    $foundPasajero = $responsable->Buscar($idPasajero);
+                                    if($foundPasajero){
+                                        imprimirEnRojo("La persona es un responsable, no puede ser pasajero \n");
                                     }
-                                }   
+                                    else {
+                                        // si la persona se encuentra , agregamos el pasajero
+                                        echo "Ingrese el pasaporte del pasajero: ";
+                                        $pasaporte = trim(fgets(STDIN));
+                                        // verificamos que nadie tenga el mismo pasaporte
+                                        $foundPasaporte = $pasajero->listar("pasaporte = $pasaporte");
+                                        if ($foundPasaporte) {
+                                            imprimirEnRojo("El pasaporte ya se encuentra registrado \n");
+                                        } else {
+                                            $pasajero->cargar($idPasajero, "", "", "", "", $pasaporte, $idViaje);
+                                            $agregarPasajero = $viaje->agregarPasajero($pasajero);
+                                            // ademas, agregamos los pasajeros de la base de datos
+                                            if ($agregarPasajero) {
+                                                $cantPasajerosNueva = count($viaje->getColObjPasajeros());
+                                                $insert = $pasajero->insertar();
+                                                if ($insert) {
+                                                    imprimirEnVerde("Pasajero agregado exitosamente: " . $cantPasajerosNueva . "/" . $cantMax . "\n") .  "\n" . 
+                                                    imprimirEnVerde("Valor: $" . $viaje->getVimporte() . "\n");
+                                }      
+                                            } 
+                                        }
+                                    }   
+                                }
+                                else {
+                                    imprimirEnRojo("La persona no se encuentra registrada con ese ID \n");
+                                }
                             }
                         }
-                    }
-                } else {
-                    imprimirEnRojo("El viaje no se encuentra registrado \n");
-                }    
-                break;
+                    } else {
+                        imprimirEnRojo("El viaje no se encuentra registrado \n");
+                    }    
+                    break;
             case 3:
                 // Modificar Pasajero
                 echo "Ingrese el id del pasajero a modificar: ";
@@ -451,40 +473,42 @@ function gestionarResponsables() {
                     imprimirEnRojo("No se encontraron responsables.\n");
                 }
                 break;
-            case 2:
-                // Agregar Responsable (verificar que exista una persona previamente)
-                echo "Ingrese el id de la persona responsable: ";
-                $idResponsable = trim(fgets(STDIN));
-                // verificamos que ese responsable no exista previamente
-                $found = $responsable->Buscar($idResponsable);
-                if ($found) {
-                    imprimirEnRojo("El responsable ya se encuentra registrado \n");
-                } else {
-                    // verificamos que primero sea una persona
-                    $foundPersona = $persona->Buscar($idResponsable);
-                    if ($foundPersona){
-                    // verificamos que no sea pasajero
-                    $foundPasajero = $pasajero->Buscar($idResponsable);
-                    if ($foundPasajero) {
-                        imprimirEnRojo("La persona es un pasajero, no puede ser responsable \n");
+                case 2:
+                    // Agregar Responsable (verificar que exista una persona previamente)
+                    echo "Ingrese el id de la persona responsable: ";
+                    $idResponsable = trim(fgets(STDIN));
+                    // verificamos que ese responsable no exista previamente
+                    $found = $responsable->Buscar($idResponsable);
+                    if ($found) {
+                        imprimirEnRojo("El responsable ya se encuentra registrado \n");
                     } else {
-                        echo "Ingrese el numero de licencia del responsable: ";
-                        $numeroLicencia = trim(fgets(STDIN));
-                        $responsable->setId($idResponsable);
-                        $responsable->setRNumeroLicencia($numeroLicencia);
-                        $responsable->setRnumeroempleado(0);
-                        $insert = $responsable->insertar();
-                        if ($insert) {
-                            imprimirEnVerde("Responsable agregado exitosamente \n");
+    
+                        // verificamos que primero sea una persona
+                        $foundPersona = $persona->Buscar($idResponsable);
+                        if ($foundPersona){
+                        // verificamos que no sea pasajero
+                        $foundPasajero = $pasajero->Buscar($idResponsable);
+                        if ($foundPasajero) {
+                            imprimirEnRojo("La persona es un pasajero, no puede ser responsable \n");
                         } else {
-                            imprimirEnRojo("Error al agregar el responsable \n");
+                            echo "Ingrese el numero de licencia del responsable: ";
+                            $numeroLicencia = trim(fgets(STDIN));
+                          
+                            $responsable->setId($idResponsable);
+                            $responsable->setRNumeroLicencia($numeroLicencia);
+                            $responsable->setRnumeroempleado(0);
+                            $insert = $responsable->insertar();
+                            if ($insert) {
+                                imprimirEnVerde("Responsable agregado exitosamente \n");
+                            } else {
+                                imprimirEnRojo("Error al agregar el responsable \n");
+                                }
+                            }
+                        } else {
+                            imprimirEnRojo("La persona no se encuentra registrada con ese ID \n");
                         }
                     }
-                    } else {
-                        imprimirEnRojo("La persona no se encuentra registrada con ese ID \n");
-                    }
-                }
-                break;
+                    break;
             case 3:
                 // Modificar Responsable
                 echo "Ingrese el id del responsable a modificar: ";
@@ -546,13 +570,6 @@ function gestionarPersonas() {
                 break;
             case 2:
                 // Agregar Persona
-                echo "Ingrese el id de la persona: ";
-                $idPersona = trim(fgets(STDIN));
-                $found = $persona->Buscar($idPersona);
-
-                if ($found){
-                    imprimirEnRojo("La persona ya se encuentra registrada \n");
-                } else {
                    echo "Ingrese el nombre de la persona: ";
                    $nombrePersona = trim(fgets(STDIN));
                    echo "Ingrese el apellido de la persona: ";
@@ -561,7 +578,6 @@ function gestionarPersonas() {
                    $telefonoPersona = trim(fgets(STDIN));  
                    echo "Ingrese el DNI de la persona: ";
                    $dniPersona = trim(fgets(STDIN));
-                   $persona->setId($idPersona);
                    $persona->setNrodoc($dniPersona);
                    $persona->setPNombre($nombrePersona);
                    $persona->setPApellido($apellidoPersona);
@@ -569,10 +585,11 @@ function gestionarPersonas() {
                    $insert = $persona->insertar();
                    if ($insert) {
                           imprimirEnVerde("Persona agregada exitosamente \n");
+                          imprimirEnVerde("Tu numero de ID es: ".$persona->getId()."\n");
                      } else {
                           imprimirEnRojo("Error al agregar la persona \n");
                    }
-                }
+                
                 break;
             case 3:
                 // Modificar Persona
