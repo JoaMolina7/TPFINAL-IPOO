@@ -124,10 +124,10 @@ function gestionarViajes() {
                 echo "Ingrese el ID de la empresa: "; // presentamos una lista de empresas para mejor entendimiento
                 $idEmpresa = trim(fgets(STDIN));
                 if ($empresa->buscar($idEmpresa)) {
-                    echo "Ingrese el documento del responsable: "; // lo hacemos por documento dado que buscar() es por DNI
-                    $dniEmpleado = trim(fgets(STDIN));
+                    echo "Ingrese el ID del responsable: "; // lo hacemos por id dado que buscar() es por ID
+                    $idResponsable = trim(fgets(STDIN));
                     $responsable = new ResponsableV();
-                    if ($responsable->buscar($dniEmpleado)) {
+                    if ($responsable->buscar($idResponsable)) {
                         $numeroEmpleado = $responsable->getRnumeroempleado();
                         echo "Ingrese el importe: ";
                         $importe = trim(fgets(STDIN));
@@ -353,17 +353,17 @@ function gestionarPasajeros() {
                     if ($cantPasajeros >= $cantMax) {
                         imprimirEnRojo("El viaje se encuentra completo: " . $cantPasajeros . "/" . $cantMax . "\n");
                     } else {
-                        echo "Ingrese el documento del pasajero: ";
-                        $documentoPasajero = trim(fgets(STDIN));
+                        echo "Ingrese el id del pasajero: ";
+                        $idPasajero = trim(fgets(STDIN));
                         // buscamos si el pasajero ya se encuentra registrado en ese vuelo y ademas que exista una persona
-                        $found = $pasajero->listar("idviaje = $idViaje and nrodoc = $documentoPasajero");
+                        $found = $pasajero->listar("id = $idPasajero");
                         if ($found){
                             imprimirEnRojo("El pasajero ya se encuentra registrado \n");
                         } else {
                             // verificamos que la persona exista
-                            $foundPersona = $persona->Buscar($documentoPasajero);
+                            $foundPersona = $persona->Buscar($idPasajero);
                             if (!$foundPersona) {
-                                imprimirEnRojo("La persona no se encuentra registrada con ese DNI \n");
+                                imprimirEnRojo("La persona no se encuentra registrada con ese ID \n");
                             } else {
                             // si la persona se encuentra , agregamos el pasajero
                             echo "Ingrese el pasaporte del pasajero: ";
@@ -373,7 +373,7 @@ function gestionarPasajeros() {
                             if ($foundPasaporte) {
                                 imprimirEnRojo("El pasaporte ya se encuentra registrado \n");
                             } else {
-                                $pasajero->cargar($documentoPasajero, "", "", "", $pasaporte, $idViaje);
+                                $pasajero->cargar($idPasajero, "", "", "", $pasaporte, $idViaje);
                                 $agregarPasajero = $viaje->agregarPasajero($pasajero);
                                 // ademas, agregamos los pasajeros de la base de datos
                                 if ($agregarPasajero) {
@@ -394,9 +394,9 @@ function gestionarPasajeros() {
                 break;
             case 3:
                 // Modificar Pasajero
-                echo "Ingrese el documento del pasajero a modificar: ";
-                $documentoPasajero = trim(fgets(STDIN));
-                $found = $pasajero->Buscar($documentoPasajero);
+                echo "Ingrese el id del pasajero a modificar: ";
+                $idPasajero = trim(fgets(STDIN));
+                $found = $pasajero->Buscar($idPasajero);
                 if ($found) {
                     echo "Ingrese el nuevo pasaporte del pasajero: ";
                     $nuevoPasaporte = trim(fgets(STDIN));
@@ -408,9 +408,9 @@ function gestionarPasajeros() {
                 }
             case 4: 
                 // Eliminar Pasajero
-                echo "Ingrese el documento del pasajero a eliminar: ";
-                $documentoPasajero = trim(fgets(STDIN));
-                $found = $pasajero->Buscar($documentoPasajero);
+                echo "Ingrese el id del pasajero a eliminar: ";
+                $idPasajero = trim(fgets(STDIN));
+                $found = $pasajero->Buscar($idPasajero);
                 if ($found) {
                     $pasajero->eliminar();
                     imprimirEnVerde("Pasajero eliminado exitosamente \n");
@@ -453,24 +453,24 @@ function gestionarResponsables() {
                 break;
             case 2:
                 // Agregar Responsable (verificar que exista una persona previamente)
-                echo "Ingrese el documento de la persona responsable: ";
-                $documentoResponsable = trim(fgets(STDIN));
+                echo "Ingrese el id de la persona responsable: ";
+                $idResponsable = trim(fgets(STDIN));
                 // verificamos que ese responsable no exista previamente
-                $found = $responsable->Buscar($documentoResponsable);
+                $found = $responsable->Buscar($idResponsable);
                 if ($found) {
                     imprimirEnRojo("El responsable ya se encuentra registrado \n");
                 } else {
                     // verificamos que primero sea una persona
-                    $foundPersona = $persona->Buscar($documentoResponsable);
+                    $foundPersona = $persona->Buscar($idResponsable);
                     if ($foundPersona){
                     // verificamos que no sea pasajero
-                    $foundPasajero = $pasajero->Buscar($documentoResponsable);
+                    $foundPasajero = $pasajero->Buscar($idResponsable);
                     if ($foundPasajero) {
                         imprimirEnRojo("La persona es un pasajero, no puede ser responsable \n");
                     } else {
                         echo "Ingrese el numero de licencia del responsable: ";
                         $numeroLicencia = trim(fgets(STDIN));
-                        $responsable->setNrodoc($documentoResponsable);
+                        $responsable->setId($idResponsable);
                         $responsable->setRNumeroLicencia($numeroLicencia);
                         $responsable->setRnumeroempleado(0);
                         $insert = $responsable->insertar();
@@ -481,15 +481,15 @@ function gestionarResponsables() {
                         }
                     }
                     } else {
-                        imprimirEnRojo("La persona no se encuentra registrada con ese DNI \n");
+                        imprimirEnRojo("La persona no se encuentra registrada con ese ID \n");
                     }
                 }
                 break;
             case 3:
                 // Modificar Responsable
-                echo "Ingrese el documento del responsable a modificar: ";
-                $documentoResponsable = trim(fgets(STDIN));
-                $found = $responsable->Buscar($documentoResponsable);
+                echo "Ingrese el id del responsable a modificar: ";
+                $idResponsable = trim(fgets(STDIN));
+                $found = $responsable->Buscar($idResponsable);
                 if ($found){
                     echo "Ingrese el nuevo numero de licencia del responsable: ";
                     $nuevoNumeroLicencia = trim(fgets(STDIN));
@@ -500,9 +500,9 @@ function gestionarResponsables() {
                 break;
             case 4:
                 // Eliminar Responsable -- Verificamos que no este asociado a ningun viaje
-                echo "Ingrese el documento del responsable a eliminar: ";
-                $documentoResponsable = trim(fgets(STDIN));
-                $found = $responsable->Buscar($documentoResponsable);
+                echo "Ingrese el id del responsable a eliminar: ";
+                $idResponsable = trim(fgets(STDIN));
+                $found = $responsable->Buscar($idResponsable);
                 if ($found) {
                     $numeroEmpleado = $responsable->getRnumeroempleado();
                     $viaje->listar("rnumeroempleado = $numeroEmpleado");
@@ -546,9 +546,9 @@ function gestionarPersonas() {
                 break;
             case 2:
                 // Agregar Persona
-                echo "Ingrese el documento de la persona: ";
-                $documentoPersona = trim(fgets(STDIN));
-                $found = $persona->Buscar($documentoPersona);
+                echo "Ingrese el id de la persona: ";
+                $idPersona = trim(fgets(STDIN));
+                $found = $persona->Buscar($idPersona);
 
                 if ($found){
                     imprimirEnRojo("La persona ya se encuentra registrada \n");
@@ -559,7 +559,10 @@ function gestionarPersonas() {
                    $apellidoPersona = trim(fgets(STDIN));
                    echo "Ingrese el telefono de la persona: ";
                    $telefonoPersona = trim(fgets(STDIN));  
-                   $persona->setNrodoc($documentoPersona);
+                   echo "Ingrese el DNI de la persona: ";
+                   $dniPersona = trim(fgets(STDIN));
+                   $persona->setId($idPersona);
+                   $persona->setNrodoc($dniPersona);
                    $persona->setPNombre($nombrePersona);
                    $persona->setPApellido($apellidoPersona);
                    $persona->setPTelefono($telefonoPersona);
@@ -573,9 +576,9 @@ function gestionarPersonas() {
                 break;
             case 3:
                 // Modificar Persona
-                echo "Ingrese el documento de la persona a modificar: ";
-                $documentoPersona = trim(fgets(STDIN));
-                $found = $persona->Buscar($documentoPersona);
+                echo "Ingrese el id de la persona a modificar: ";
+                $idPersona = trim(fgets(STDIN));
+                $found = $persona->Buscar($idPersona);
                 if ($found) {
                     echo "Que Desea modificar? \n";
                     mostrarMenuModificacionPersona();
@@ -613,9 +616,9 @@ function gestionarPersonas() {
                 break;
             case 4:
                 // Eliminar Persona
-                echo "Ingrese el documento de la persona a eliminar: ";
-                $documentoPersona = trim(fgets(STDIN));
-                $found = $persona->Buscar($documentoPersona);
+                echo "Ingrese el id de la persona a eliminar: ";
+                $idPersona = trim(fgets(STDIN));
+                $found = $persona->Buscar($idPersona);
                 if ($found) {
                     $persona->eliminar();
                     imprimirEnVerde("Persona eliminada exitosamente \n");

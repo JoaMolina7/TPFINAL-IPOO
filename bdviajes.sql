@@ -18,9 +18,9 @@ CREATE TABLE persona(
 CREATE TABLE responsableV(
     rnumeroempleado int AUTO_INCREMENT,
     rnumerolicencia int,
-	nrodoc int,
+	id int,
     PRIMARY KEY (rnumeroempleado),
-    FOREIGN KEY (nrodoc) REFERENCES persona (nrodoc) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (id) REFERENCES persona (id) ON UPDATE CASCADE ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 	
 CREATE TABLE viaje (
@@ -39,12 +39,12 @@ CREATE TABLE viaje (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT = 1;
 	
 CREATE TABLE pasajero(
-    nrodoc int,
+    id int,
     pasaporte varchar(15),
 	idviaje int,
     PRIMARY KEY (pasaporte),
 	FOREIGN KEY (idviaje) REFERENCES viaje (idviaje), -- tiene restrict
-    FOREIGN KEY (nrodoc) REFERENCES persona (nrodoc) ON UPDATE CASCADE ON DELETE CASCADE	
+    FOREIGN KEY (id) REFERENCES persona (id) ON UPDATE CASCADE ON DELETE CASCADE	
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
  
   

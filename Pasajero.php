@@ -8,8 +8,8 @@ class Pasajero extends Persona{
         $this->pasaporte = "";
         $this->idviaje = "";
     }
-    public function cargar($NroD,$Nom,$Ape,$ptelefono,$pasaporte=null,$idviaje=null){
-        parent::cargar($NroD,$Nom,$Ape,$ptelefono);
+    public function cargar($id,$NroD,$Nom,$Ape,$ptelefono,$pasaporte=null,$idviaje=null){
+        parent::cargar($id,$NroD,$Nom,$Ape,$ptelefono);
         $this->setPasaporte($pasaporte);
 		$this->setIdviaje($idviaje);
     }
@@ -27,20 +27,21 @@ class Pasajero extends Persona{
     public function setIdviaje($idviaje) {
         $this->idviaje = $idviaje;
     }
+
     
     /**
 	 * Recupera los datos de una persona por dni
 	 * @param int $dni
 	 * @return true en caso de encontrar los datos, false en caso contrario 
 	 */		
-    public function Buscar($dni){ // Buscar por id 
+    public function Buscar($id){ // Buscar por id 
 		$base=new BaseDatos();
-		$consulta="Select * from pasajero where nrodoc=".$dni;
+		$consulta="Select * from pasajero where id=".$id;
 		$resp= false;
 		if($base->Iniciar()){
 		    if($base->Ejecutar($consulta)){
 				if($row2=$base->Registro()){	
-				    parent::Buscar($dni);
+				    parent::Buscar($id);
                     $this->setIdviaje($row2['idviaje']);
                     $this->setPasaporte($row2['pasaporte']);
 					$resp= true;
@@ -73,7 +74,7 @@ class Pasajero extends Persona{
 				$arreglo = array();
 				while ($row2 = $base->Registro()) {
 					$obj = new Pasajero();
-					$obj->Buscar($row2['nrodoc']);
+					$obj->Buscar($row2['id']);
 					array_push($arreglo, $obj);
 				}
 			} else {
@@ -92,8 +93,8 @@ class Pasajero extends Persona{
 		$resp = false;
 	
 		if ($base->iniciar()) {
-			$consultaInsertar = "INSERT INTO pasajero (nrodoc, pasaporte, idviaje)
-                             VALUES (".$this->getNrodoc().", '".$this->getPasaporte()."', ".$this->getIdviaje().")";
+			$consultaInsertar = "INSERT INTO pasajero (id, pasaporte, idviaje)
+                             VALUES (".$this->getId().", '".$this->getPasaporte()."', ".$this->getIdviaje().")";
 								 
 			if ($base->Iniciar()) {
 				if ($base->Ejecutar($consultaInsertar)) {
@@ -115,12 +116,12 @@ class Pasajero extends Persona{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-		$consulta = "SELECT * FROM pasajero WHERE nrodoc=".$this->getNrodoc();
+		$consulta = "SELECT * FROM pasajero WHERE id=".$this->getId();
 		$found = false;
 		if ($base->iniciar()) {
 			if ($base->Ejecutar($consulta)) {
 				$row2 = $base->Registro();
-				if ($row2['nrodoc'] == $this->getNrodoc()) {
+				if ($row2['id'] == $this->getId()) {
 					$found = true;
 				}
 			}
@@ -128,7 +129,7 @@ class Pasajero extends Persona{
 		if ($found) {
 			if(parent::modificar()){
 				// buscar pasajero
-				$consultaModifica="UPDATE pasajero SET idviaje='".$this->getIdviaje()."', pasaporte='".$this->getPasaporte()."' WHERE nrodoc=". $this->getNrodoc();
+				$consultaModifica="UPDATE pasajero SET idviaje='".$this->getIdviaje()."', pasaporte='".$this->getPasaporte()."' WHERE id=". $this->getId();
 				if($base->Iniciar()){
 					if($base->Ejecutar($consultaModifica)){
 						$resp=  true;
@@ -148,12 +149,12 @@ class Pasajero extends Persona{
 	public function eliminar(){
 		$base=new BaseDatos();
 		$resp=false;
-		$consulta = "SELECT * FROM pasajero WHERE nrodoc=".$this->getNrodoc();
+		$consulta = "SELECT * FROM pasajero WHERE id=".$this->getId();
 		$found = false;
 		if ($base->Iniciar()) {
 			if ($base->Ejecutar($consulta)) {
 				$row2 = $base->Registro();
-				if ($row2['nrodoc'] == $this->getNrodoc()) {
+				if ($row2['id'] == $this->getId()) {
 					$found = true;
 				}
 			}
@@ -161,7 +162,7 @@ class Pasajero extends Persona{
 		if ($found) {
 			if($base->Iniciar()){
 				// buscar y despues eliminar
-					$consultaBorra="DELETE FROM pasajero WHERE nrodoc=".$this->getNrodoc();
+					$consultaBorra="DELETE FROM pasajero WHERE id=".$this->getId();
 					if($base->Ejecutar($consultaBorra)){
 						if(parent::eliminar()){
 							$resp=  true;

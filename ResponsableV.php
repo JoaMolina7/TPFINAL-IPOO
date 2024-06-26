@@ -6,10 +6,11 @@ class ResponsableV extends Persona{
         parent::__construct();
         $this->rnumeroempleado = "";
         $this->rnumerolicencia = "";
+
     }
-    public function cargar($NroD,$Nom,$Ape,$ptelefono,$rnumeroempleado=null,$rnumerolicencia=null){
+    public function cargar($id,$NroD,$Nom,$Ape,$ptelefono,$rnumeroempleado=null,$rnumerolicencia=null){
         
-        parent::cargar($NroD,$Nom,$Ape,$ptelefono);
+        parent::cargar($id, $NroD,$Nom,$Ape,$ptelefono);
         $this->setRnumeroempleado($rnumeroempleado);
         $this->setRnumerolicencia($rnumerolicencia);
     }
@@ -29,14 +30,14 @@ class ResponsableV extends Persona{
     public function setRnumerolicencia($rnumerolicencia) {
         $this->rnumerolicencia = $rnumerolicencia;
     }
-    public function Buscar($dni){
+    public function Buscar($id){
 		$base=new BaseDatos();
-		$consulta = "SELECT * FROM responsableV WHERE nrodoc = " . $dni;
+		$consulta = "SELECT * FROM responsableV WHERE id = " . $id;
 		$resp= false;
 		if($base->Iniciar()){
 		    if($base->Ejecutar($consulta)){
 				if($row2=$base->Registro()){	
-				    parent::Buscar($dni);
+				    parent::Buscar($id);
 				    $this->setRnumeroempleado($row2['rnumeroempleado']);
 				    $this->setRnumerolicencia($row2['rnumerolicencia']);
 					$resp= true;
@@ -66,7 +67,7 @@ class ResponsableV extends Persona{
 			    $arreglo= array();
 				while($row2=$base->Registro()){
 					$obj=new ResponsableV();
-					$obj->Buscar($row2['nrodoc']);
+					$obj->Buscar($row2['id']);
 					array_push($arreglo,$obj);
 				}
 		 	}	else {
@@ -81,8 +82,8 @@ class ResponsableV extends Persona{
 		$base = new BaseDatos();
 		$resp = false;
 		
-		$consultaInsertar = "INSERT INTO responsableV (nrodoc, rnumeroempleado, rnumerolicencia)
-							 VALUES ('" . $this->getNrodoc() . "','" . $this->getRnumeroempleado() . "','" . $this->getRnumerolicencia() . "')";
+		$consultaInsertar = "INSERT INTO responsableV (id, rnumeroempleado, rnumerolicencia)
+							 VALUES ('" . $this->getId() . "','" . $this->getRnumeroempleado() . "','" . $this->getRnumerolicencia() . "')";
 	
 		if ($base->Iniciar()) {
 			if ($base->Ejecutar($consultaInsertar)) {
@@ -103,12 +104,12 @@ class ResponsableV extends Persona{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-		$consulta = "SELECT * FROM responsableV WHERE nrodoc = " . $this->getNrodoc();
+		$consulta = "SELECT * FROM responsableV WHERE id = " . $this->getId();
 		$found = false;
 		if ($base->Iniciar()) {
 			if ($base->Ejecutar($consulta)) {
 				$row = $base->Registro();
-				if ($row['nrodoc'] == $this->getNrodoc()) {
+				if ($row['id'] == $this->getId()) {
 					$found = true;
 				}
 			}
@@ -116,7 +117,7 @@ class ResponsableV extends Persona{
 		if ($found) {
 
 			if(parent::modificar()){
-				$consultaModifica="UPDATE responsableV SET rnumeroempleado='".$this->getRnumeroempleado()."', rnumerolicencia='".$this->getRnumerolicencia()."' WHERE nrodoc=". $this->getNrodoc();
+				$consultaModifica="UPDATE responsableV SET rnumeroempleado='".$this->getRnumeroempleado()."', rnumerolicencia='".$this->getRnumerolicencia()."' WHERE id=". $this->getId();
 				if($base->Iniciar()){
 					if($base->Ejecutar($consultaModifica)){
 						$resp=  true;
@@ -137,12 +138,12 @@ class ResponsableV extends Persona{
 	public function eliminar(){
 		$base=new BaseDatos();
 		$resp=false;
-		$consulta = "DELETE FROM responsableV WHERE nrodoc=". $this->getNrodoc();
+		$consulta = "DELETE FROM responsableV WHERE id=". $this->getId();
 		$found = false;
 		if ($base->Iniciar()) {
 			if ($base->ejecutar($consulta)) {
 				$row = $base->Registro();
-				if ($row['nrodoc'] == $this->getNrodoc()) {
+				if ($row['id'] == $this->getId()) {
 					$found = true;
 				}
 			}
@@ -150,7 +151,7 @@ class ResponsableV extends Persona{
 		if ($found) {
 
 		if($base->Iniciar()){
-				$consultaBorra="DELETE FROM responsableV WHERE nrodoc=".$this->getNrodoc();
+				$consultaBorra="DELETE FROM responsableV WHERE id=".$this->getId();
 				if($base->Ejecutar($consultaBorra)){
 				    if(parent::eliminar()){
 				        $resp=  true;
