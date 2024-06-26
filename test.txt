@@ -1,0 +1,20 @@
+1-Validar existencia de empresa en eliminar() ✅
+2-Validar existen de empresa en modificar() ✅
+3-No se puede eliminar una empresa que tenga viajes relacionados ✅  -- ya lo solucione
+4-En insertar, listar y buscar no es necesario verificar ❓️
+5-tendriamos que verificar que pasa si intentamos eliminar a una persona 
+que es responsable o pasajero. ? ❌
+6-Validar existencia de Persona en eliminar() ✅ -- deberia hacerse por id ? 
+7-Validar existencia de Persona en modificar() ✅ -- deberia hacerse por id ? 
+8-Validar existencia de Pasajero en eliminar() ✅
+9-Validar existencia de Pasajero en modificar() ✅
+10-Validar existencia de ResponsableV en eliminar() ✅
+11-Validar existencia de ResponsableV en modificar() ✅
+12-Validar existencia de Viaje en eliminar() ✅ 
+13-Validar existencia de Viaje en modificar() ✅
+14-No se puede eliminar un viaje que contenga pasajeros ✅ -- ya lo solucione 
+15-No se puede eliminar un empleado que este asociado a un viaje ✅ -- ya lo solucione
+16- Una persona no puede ser pasajero y responsable al mismo tiempo ❌
+17- Verificar que el pasajero este presente en un unico viaje ❌
+18- Tener en cuenta que se actualizo la estructura de Persona (id) , 
+actualizar todo (test y ORM) en base a eso ❌

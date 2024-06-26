@@ -86,7 +86,6 @@ class Empresa{
     
 
 	public function listar($condicion=""){
-	    $arregloPersona = null;
 		$base=new BaseDatos();
 		$consultasEmpresas="Select * from empresa ";
 		if ($condicion!=""){
@@ -150,8 +149,19 @@ class Empresa{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-		// validar existencia de empresa
-		$consultaModifica = "UPDATE empresa SET enombre='".$this->getENombre()."', edireccion='".$this->getEdireccion()."' WHERE idempresa=".$this->getIdEmpresa();
+		$consulta = "SELECT * FROM empresa WHERE idempresa=".$this->getIdEmpresa();
+		$found = false;
+		if ($base->Iniciar()) {
+			if ($base->Ejecutar($consulta)) {
+				$row2 = $base->Registro();
+				if ($row2['idempresa'] == $this->getIdEmpresa()) {
+					$found = true;
+				}
+			}
+		}
+		if ($found) {
+			$consultaModifica = "UPDATE empresa SET enombre='".$this->getENombre()."', edireccion='".$this->getEdireccion()."' WHERE idempresa=".$this->getIdEmpresa();
+
 		if($base->Iniciar()){
 			if($base->Ejecutar($consultaModifica)){
 			    $resp=  true;
@@ -163,6 +173,9 @@ class Empresa{
 				$this->setmensajeoperacion($base->getError());
 			
 		}
+		}
+
+		
 		return $resp;
 	}
 	
@@ -170,17 +183,25 @@ class Empresa{
 		$base=new BaseDatos();
 		$resp=false;
 		if($base->Iniciar()){
-			// validacion de empresa
-				$consultaBorra="DELETE FROM empresa WHERE idempresa=".$this->getIdEmpresa();
-				if($base->Ejecutar($consultaBorra)){
-				    $resp=  true;
-				}else{
-						$this->setmensajeoperacion($base->getError());
-					
+			// validamos que la empresa exista antes de eliminarla 
+				$consulta="SELECT * FROM empresa WHERE idempresa=".$this->getIdEmpresa();
+				$found = false;
+				if ($base->Ejecutar($consulta)) {
+					$row2 = $base->Registro();
+					if ($row2['idempresa'] == $this->getIdEmpresa()) {
+						$found = true;
+					}
 				}
+				if ($found) {
+					$consultaBorra="DELETE FROM empresa WHERE idempresa=".$this->getIdEmpresa();
+					if($base->Ejecutar($consultaBorra)){
+				    	$resp=  true;
+					}else{
+						$this->setmensajeoperacion($base->getError());
+					}   
+				}	
 		}else{
-				$this->setmensajeoperacion($base->getError());
-			
+			$this->setmensajeoperacion($base->getError());
 		}
 		return $resp; 
 	}

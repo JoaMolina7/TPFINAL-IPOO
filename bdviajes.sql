@@ -7,11 +7,12 @@ CREATE TABLE empresa(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE persona(
+    id int AUTO_INCREMENT, -- DONE
     nrodoc int, -- implementar id como primary
     pnombre varchar(150),
     papellido varchar(150),
     ptelefono int,
-    PRIMARY KEY (nrodoc)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE responsableV(

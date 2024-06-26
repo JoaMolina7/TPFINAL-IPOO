@@ -201,7 +201,19 @@ class Viaje{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-		// busco y despues acciono
+		$consulta = "SELECT * FROM viaje WHERE idviaje=".$this->getIdViaje();
+		$found = false;
+		if ($found) {
+			if ($base->iniciar()) {
+				if ($base->Ejecutar($consulta)) {
+					$row2 = $base->Registro();
+					if ($row2['idviaje'] == $this->getIdViaje()) {
+						$found = true;
+					}
+				}
+			}
+		}
+		if ($found) {
 		$consultaModifica = "UPDATE viaje SET 
                         vdestino = '".$this->getVdestino()."', 
                         vcantmaxpasajeros = ".$this->getVcantmaxpasajeros().", 
@@ -221,14 +233,27 @@ class Viaje{
 				$this->setmensajeoperacion($base->getError());
 			
 		}
+		}
 		return $resp;
 	}
 	
 	public function eliminar(){
 		$base=new BaseDatos();
 		$resp=false;
+		$consulta = "SELECT * FROM viaje WHERE idviaje=".$this->getIdViaje();
+		$found = false; 
 		if($base->Iniciar()){
-			// verificar y despues eliminar
+			if($base->Ejecutar($consulta)){
+				if($row2=$base->Registro()){
+					if($row2['idviaje'] == $this->getIdViaje()){
+						$found = true;
+					}
+				}
+			}
+		}
+		if ($found) {
+
+		if($base->Iniciar()){
 				$consultaBorra="DELETE FROM viaje WHERE idviaje=".$this->getIdViaje();
 				if($base->Ejecutar($consultaBorra)){
 				    $resp=  true;
@@ -239,6 +264,7 @@ class Viaje{
 		}else{
 				$this->setmensajeoperacion($base->getError());
 			
+		}
 		}
 		return $resp; 
 	}

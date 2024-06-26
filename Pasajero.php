@@ -115,42 +115,67 @@ class Pasajero extends Persona{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-	    if(parent::modificar()){
-			// buscar pasajero
-	        $consultaModifica="UPDATE pasajero SET idviaje='".$this->getIdviaje()."', pasaporte='".$this->getPasaporte()."' WHERE nrodoc=". $this->getNrodoc();
-	        if($base->Iniciar()){
-	            if($base->Ejecutar($consultaModifica)){
-	                $resp=  true;
-	            }else{
-	                $this->setmensajeoperacion($base->getError());
-	                
-	            }
-	        }else{
-	            $this->setmensajeoperacion($base->getError());
-	            
-	        }
-	    }
+		$consulta = "SELECT * FROM pasajero WHERE nrodoc=".$this->getNrodoc();
+		$found = false;
+		if ($base->iniciar()) {
+			if ($base->Ejecutar($consulta)) {
+				$row2 = $base->Registro();
+				if ($row2['nrodoc'] == $this->getNrodoc()) {
+					$found = true;
+				}
+			}
+		}
+		if ($found) {
+			if(parent::modificar()){
+				// buscar pasajero
+				$consultaModifica="UPDATE pasajero SET idviaje='".$this->getIdviaje()."', pasaporte='".$this->getPasaporte()."' WHERE nrodoc=". $this->getNrodoc();
+				if($base->Iniciar()){
+					if($base->Ejecutar($consultaModifica)){
+						$resp=  true;
+					}else{
+						$this->setmensajeoperacion($base->getError());
+						
+					}
+				}else{
+					$this->setmensajeoperacion($base->getError());
+					
+				}
+			}
+		}
 		return $resp;
 	}
 	
 	public function eliminar(){
 		$base=new BaseDatos();
 		$resp=false;
-		if($base->Iniciar()){
-			// buscar y despues eliminar
-				$consultaBorra="DELETE FROM pasajero WHERE nrodoc=".$this->getNrodoc();
-				if($base->Ejecutar($consultaBorra)){
-				    if(parent::eliminar()){
-				        $resp=  true;
-				    }
-				}else{
-						$this->setmensajeoperacion($base->getError());
-					
+		$consulta = "SELECT * FROM pasajero WHERE nrodoc=".$this->getNrodoc();
+		$found = false;
+		if ($base->Iniciar()) {
+			if ($base->Ejecutar($consulta)) {
+				$row2 = $base->Registro();
+				if ($row2['nrodoc'] == $this->getNrodoc()) {
+					$found = true;
 				}
-		}else{
-				$this->setmensajeoperacion($base->getError());
-			
+			}
 		}
+		if ($found) {
+			if($base->Iniciar()){
+				// buscar y despues eliminar
+					$consultaBorra="DELETE FROM pasajero WHERE nrodoc=".$this->getNrodoc();
+					if($base->Ejecutar($consultaBorra)){
+						if(parent::eliminar()){
+							$resp=  true;
+						}
+					}else{
+							$this->setmensajeoperacion($base->getError());
+						
+					}
+			}else{
+					$this->setmensajeoperacion($base->getError());
+				
+			}
+		}
+
 		return $resp; 
 	}
     public function __toString(){

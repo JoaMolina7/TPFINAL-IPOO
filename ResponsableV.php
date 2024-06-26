@@ -103,27 +103,52 @@ class ResponsableV extends Persona{
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
-	    if(parent::modificar()){
-	        $consultaModifica="UPDATE responsableV SET rnumeroempleado='".$this->getRnumeroempleado()."', rnumerolicencia='".$this->getRnumerolicencia()."' WHERE nrodoc=". $this->getNrodoc();
-	        if($base->Iniciar()){
-	            if($base->Ejecutar($consultaModifica)){
-	                $resp=  true;
-	            }else{
-	                $this->setmensajeoperacion($base->getError());
-	                
-	            }
-	        }else{
-	            $this->setmensajeoperacion($base->getError());
-	            
-	        }
-	    }
-		
+		$consulta = "SELECT * FROM responsableV WHERE nrodoc = " . $this->getNrodoc();
+		$found = false;
+		if ($base->Iniciar()) {
+			if ($base->Ejecutar($consulta)) {
+				$row = $base->Registro();
+				if ($row['nrodoc'] == $this->getNrodoc()) {
+					$found = true;
+				}
+			}
+		}
+		if ($found) {
+
+			if(parent::modificar()){
+				$consultaModifica="UPDATE responsableV SET rnumeroempleado='".$this->getRnumeroempleado()."', rnumerolicencia='".$this->getRnumerolicencia()."' WHERE nrodoc=". $this->getNrodoc();
+				if($base->Iniciar()){
+					if($base->Ejecutar($consultaModifica)){
+						$resp=  true;
+					}else{
+						$this->setmensajeoperacion($base->getError());
+						
+					}
+				}else{
+					$this->setmensajeoperacion($base->getError());
+					
+				}
+			}
+			
+		}
 		return $resp;
 	}
 	
 	public function eliminar(){
 		$base=new BaseDatos();
 		$resp=false;
+		$consulta = "DELETE FROM responsableV WHERE nrodoc=". $this->getNrodoc();
+		$found = false;
+		if ($base->Iniciar()) {
+			if ($base->ejecutar($consulta)) {
+				$row = $base->Registro();
+				if ($row['nrodoc'] == $this->getNrodoc()) {
+					$found = true;
+				}
+			}
+		}
+		if ($found) {
+
 		if($base->Iniciar()){
 				$consultaBorra="DELETE FROM responsableV WHERE nrodoc=".$this->getNrodoc();
 				if($base->Ejecutar($consultaBorra)){
@@ -138,6 +163,8 @@ class ResponsableV extends Persona{
 				$this->setmensajeoperacion($base->getError());
 			
 		}
+		}
+
 		return $resp; 
 	}
     public function __toString(){

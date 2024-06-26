@@ -186,9 +186,14 @@ function gestionarViajes() {
                 }
                 break;
             case 4:
-                // Eliminar Viaje
+                // Eliminar Viaje -- Verificamos que no tenga pasajeros asociados
                 echo "Ingrese el ID del viaje a eliminar: ";
                 $idViaje = trim(fgets(STDIN));
+                $enViaje = $pasajero->listar("idviaje = $idViaje");
+                if ($enViaje) {
+                    imprimirEnRojo("El viaje tiene pasajeros asociados, no se puede eliminar \n");
+                } else {
+
                 $found = $viaje->Buscar($idViaje);
                 if ($found) {
                     $viaje->eliminar();
@@ -196,7 +201,8 @@ function gestionarViajes() {
                 } else {
                     imprimirEnRojo("El viaje no se encuentra registrado \n");
                 }
-                // CORRECCION: eliminar los pasajeros antes de eliminar el viaje
+                }
+
                 break;
             default:
                 echo "Opción no válida, por favor seleccione una opción válida \n";
@@ -211,6 +217,7 @@ function gestionarEmpresas() {
     echo "Opción: ";
     $opcionUserEmpresa = trim(fgets(STDIN));
     $empresa = new Empresa();
+    $viaje = new Viaje();
     if ($opcionUserEmpresa == 5) {
         App();
     } else {
@@ -279,15 +286,20 @@ function gestionarEmpresas() {
                 }
                 break;
             case 4: 
-                // Eliminar Empresa
+                // Eliminar Empresa -- Verificamos primero que no tenga ningun viaje asociado 
                 echo "Ingrese el ID de la empresa a eliminar: ";
                 $idEmpresa = trim(fgets(STDIN));
-                $found = $empresa->Buscar($idEmpresa);
-                if ($found) {
-                    $empresa->eliminar();
-                    imprimirEnVerde("Empresa eliminada exitosamente \n");
+                $viaje->listar("idempresa = $idEmpresa");
+                if ($viaje) {
+                    imprimirEnRojo("La empresa tiene viajes asociados, no se puede eliminar \n");
                 } else {
-                    imprimirEnRojo("La empresa no se encuentra registrada \n");
+                    $found = $empresa->Buscar($idEmpresa);
+                    if ($found) {
+                        $empresa->eliminar();
+                        imprimirEnVerde("Empresa eliminada exitosamente \n");
+                    } else {
+                        imprimirEnRojo("La empresa no se encuentra registrada \n");
+                    }
                 }
                 break;
         }
@@ -421,6 +433,7 @@ function gestionarResponsables() {
     $responsable = new ResponsableV();
     $pasajero = new Pasajero();
     $persona = new Persona();
+    $viaje = new Viaje();
     if ($opcionUserResponsable == 5) {
         App();
     } else {
@@ -486,13 +499,19 @@ function gestionarResponsables() {
                 }
                 break;
             case 4:
-                // Eliminar Responsable
+                // Eliminar Responsable -- Verificamos que no este asociado a ningun viaje
                 echo "Ingrese el documento del responsable a eliminar: ";
                 $documentoResponsable = trim(fgets(STDIN));
                 $found = $responsable->Buscar($documentoResponsable);
                 if ($found) {
-                    $responsable->eliminar();
-                    imprimirEnVerde("Responsable eliminado exitosamente \n");
+                    $numeroEmpleado = $responsable->getRnumeroempleado();
+                    $viaje->listar("rnumeroempleado = $numeroEmpleado");
+                    if ($viaje) {
+                        imprimirEnRojo("El responsable tiene viajes asociados, no se puede eliminar \n");
+                    } else {
+                        $responsable->eliminar();
+                        imprimirEnVerde("Responsable eliminado exitosamente \n");
+                    }
                 } else {
                     imprimirEnRojo("El responsable no se encuentra registrado \n");
                 }

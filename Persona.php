@@ -138,6 +138,17 @@ class Persona {
 	public function modificar(){
 	    $resp =false; 
 	    $base=new BaseDatos();
+		$consulta = "SELECT * FROM persona WHERE nrodoc=".$this->getNrodoc();
+		$found = false;
+		if ($base->Iniciar()) {
+			if ($base->Ejecutar($consulta)) {
+				$row2 = $base->Registro();
+				if ($row2['nrodoc'] == $this->getNrodoc()) {
+					$found = true;
+				}
+			}
+		}
+		if ($found) {
 
 		$nombre = $this->getPNombre();
 		$apellido = $this->getPApellido();
@@ -156,13 +167,26 @@ class Persona {
 				$this->setmensajeoperacion($base->getError());
 			
 		}
+		}
+
 		return $resp;
 	}
 	
 	public function eliminar(){
 		$base=new BaseDatos();
 		$resp=false;
-		if($base->Iniciar()){
+		$consulta = "SELECT * FROM persona WHERE nrodoc=".$this->getNrodoc();
+		$found = false; 
+		if ($base->iniciar()) {
+			if ($base->ejecutar($consulta)) {
+				$row2 = $base->Registro();
+				if ($row2['nrodoc'] == $this->getNrodoc()) {
+					$found = true;
+				}
+			}
+		}
+		if ($found) {
+			if($base->Iniciar()){
 				$consultaBorra="DELETE FROM persona WHERE nrodoc=".$this->getNrodoc();
 				if($base->Ejecutar($consultaBorra)){
 				    $resp=  true;
@@ -173,6 +197,7 @@ class Persona {
 		}else{
 				$this->setmensajeoperacion($base->getError());
 			
+		}
 		}
 		return $resp; 
 	}
